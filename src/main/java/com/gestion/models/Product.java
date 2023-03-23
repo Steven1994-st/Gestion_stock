@@ -1,17 +1,21 @@
 package com.gestion.models;
 import jakarta.persistence.*;
 
-//@Entity
-//@Table(name="PRODUCT")
+@Entity
+@Table(name="PRODUCT")
 public class Product {
 	
-	//@Id
-    //@GeneratedValue(strategy=GenerationType.AUTO)
+	@Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
 	private int id;
 	private String nom;
 	private String description;
 	private float prix;
 	
+	public Product() 
+	{
+		
+	}
 	public Product(int id, String nom, String description, float prix) {
 		this.id = id;
 		this.nom = nom;
