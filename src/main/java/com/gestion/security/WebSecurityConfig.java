@@ -1,29 +1,17 @@
 package com.gestion.security;
 
-import com.gestion.models.User;
-import com.gestion.services.UserDetailsServiceImpl;
-import com.gestion.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.gestion.model.User;
+import com.gestion.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -41,9 +29,12 @@ public class WebSecurityConfig {
 //    @Autowired
 //    private AuthEntryPointJwt unauthorizedHandler;
 
+//    @Autowired
+//    private AccessDeniedHandler accessDeniedHandler;
+
     @Bean
     public UserDetailsService userDetailsService() {
-        return new UserDetailsServiceImpl();
+        return new CustomUserDetailsService();
     }
 
     @Bean
@@ -51,10 +42,10 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public JwtTokenFilter authenticationJwtTokenFilter() {
-        return new JwtTokenFilter();
-    }
+//    @Bean
+//    public JwtTokenFilter authenticationJwtTokenFilter() {
+//        return new JwtTokenFilter();
+//    }
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http, BCryptPasswordEncoder bCryptPasswordEncoder, UserDetailsService userDetailsService)
@@ -70,20 +61,31 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // Enable CORS and disable CSRF
         http.cors().and().csrf().disable()
+                .authorizeHttpRequests((requests) -> requests
 //                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeHttpRequests()
-                .requestMatchers("/account/register/client").permitAll()
-                .requestMatchers("/account/register/institution").permitAll()
-                .requestMatchers("/account/login").permitAll()
-                .requestMatchers("/account/register/send-code").permitAll()
-                .requestMatchers("/account/register/activation").permitAll()
-                .requestMatchers("/account/reset-password/send-code").permitAll()
-                .requestMatchers("/account/reset-password/validation").permitAll()
-                .requestMatchers("/customer/**").hasAnyAuthority(User.ROLE.EMPLOYEE.name())
-//                .antMatchers("/institution/**").permitAll()
-                .requestMatchers("/admin/**").hasAnyAuthority(User.ROLE.ADMIN.name())
-                .anyRequest().authenticated();
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+//                .authorizeHttpRequests()
+                        .requestMatchers("/").permitAll()
+//                        .requestMatchers("/registration").permitAll()
+                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/access-denied").permitAll()
+//                        .requestMatchers("//**").permitAll()
+
+//                        .requestMatchers("/account/register/client").permitAll()
+//                        .requestMatchers("/account/login").permitAll()
+//                        .requestMatchers("/account/register/send-code").permitAll()
+//                        .requestMatchers("/account/register/activation").permitAll()
+//                        .requestMatchers("/account/reset-password/send-code").permitAll()
+//                        .requestMatchers("/account/reset-password/validation").permitAll()
+                        .requestMatchers("/user/**").hasAnyAuthority(User.ROLE.EMPLOYEE.name(), User.ROLE.ADMIN.name())
+        //                .antMatchers("/institution/**").permitAll()
+                        .requestMatchers("/admin/**").hasAnyAuthority(User.ROLE.ADMIN.name())
+                        .anyRequest().authenticated())
+                        .formLogin().loginPage("/login").loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/admin/user-list")
+                        .permitAll()
+                        .and().logout().permitAll()
+                        .and().exceptionHandling().accessDeniedPage("/access-denied");
 //        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

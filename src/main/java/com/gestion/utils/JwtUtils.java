@@ -13,7 +13,7 @@ import java.util.Date;
 /** Utility class related to Json Web Tokens
  *
  */
-@Component
+//@Component
 public class JwtUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);

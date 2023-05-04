@@ -1,6 +1,6 @@
 package com.gestion.security;
 
-import com.gestion.services.UserDetailsServiceImpl;
+import com.gestion.service.CustomUserDetailsService;
 import com.gestion.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -28,7 +28,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     public JwtUtils jwtUtils;
 
     @Autowired
-    public UserDetailsServiceImpl userDetailsService;
+    public CustomUserDetailsService userDetailsService;
 
     protected Logger logger = LoggerFactory.getLogger(JwtTokenFilter.class);
 
