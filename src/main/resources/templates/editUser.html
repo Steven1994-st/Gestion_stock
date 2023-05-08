@@ -9,10 +9,10 @@
 
 <body>
 <div class="container">
-  <h1>Modifier utilisateur</h1>
+  <h1>Modification utilisateur</h1>
   <hr>
 
-  <form action="#" th:action="@{/admin/update-user}"
+  <form action="#" th:action="@{/admin/update-user/{id}(id=${user.id})}"
         th:object="${user}" method="POST">
     <input type="text" th:field="*{firstname}" id="firstname" placeholder="Prénom" class="form-control mb-4 col-4">
 
@@ -31,7 +31,7 @@
 
   <hr>
 
-  <a th:href="@{/}"> Retourner à la liste d'utilisateur</a>
+  <a th:href="@{/admin/user-list}"> Retourner à la liste d'utilisateur</a>
 </div>
 </body>
 

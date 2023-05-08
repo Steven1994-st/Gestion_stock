@@ -30,8 +30,6 @@ import java.util.stream.Collectors;
 public class AccountController {
     protected Logger logger;
 
-    private final AuthenticationManager authenticationManager;
-
 //    @Autowired
 //    JwtUtils jwtUtils;
 
@@ -42,8 +40,12 @@ public class AccountController {
     AccountService accountService;
 
 
-    public AccountController(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
+//    public AccountController(AuthenticationManager authenticationManager) {
+//        this.authenticationManager = authenticationManager;
+//        this.logger = LoggerFactory.getLogger(this.getClass());
+//    }
+
+    public AccountController() {
         this.logger = LoggerFactory.getLogger(this.getClass());
     }
 
@@ -51,6 +53,16 @@ public class AccountController {
     @GetMapping("/")
     public String viewHomePage() {
         return "login";
+    }
+
+    @RequestMapping("/login")
+    public String viewLoginPage() {
+        return "login";
+    }
+
+    @RequestMapping("/access-denied")
+    public String viewAccessDeniedPage() {
+        return "accessDenied";
     }
 
 //    @GetMapping("/registration")

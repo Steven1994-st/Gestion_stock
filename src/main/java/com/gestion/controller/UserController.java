@@ -50,7 +50,7 @@ public class UserController {
     @RequestMapping("/product-list")
     public String viewProductListPage(Model model) {
         model.addAttribute("listProduct", productService.getRepository().findAll());
-        return "userList";
+        return "productList";
     }
 
     @RequestMapping("/show-add-product-form")
@@ -60,7 +60,7 @@ public class UserController {
         return "addProduct";
     }
 
-    @PostMapping("/save-new-product")
+    @PostMapping("/add-product")
     public String saveNewProduct(@Valid @ModelAttribute("product") Product product,
                                BindingResult result,
                                Model model) {
@@ -69,44 +69,47 @@ public class UserController {
 
         if (productFound != null)
             result.rejectValue("reference", null,
-                    "Product already exists with this reference !!!");
+                    "Un produit existe déjà avec cette référence !!!");
 
         if (result.hasErrors()) {
             model.addAttribute("product", product);
-            return "/user/show-add-product-form";
+            return "addProduct";
         }
-
-        productService.getRepository().save(product);
+        product.setId(product.getId());
+        productService.updateProduct(product);
         return "redirect:/user/product-list";
     }
 
     @GetMapping("/show-update-product-form/{id}")
     public String showFormForUpdateProduct(@PathVariable(value = "id") long id, Model model) {
 
-        // get user from the service
-        Optional<Product> product = productService.getRepository().findById(id);
+        // get product from the service
+        Product product = productService.getRepository().findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Product Id:" + id));
 
         // set employee as a model attribute to pre-populate the form
         model.addAttribute("product", product);
         return "editProduct";
     }
 
-    @PostMapping("/update-product")
-    public String updateProduct(@Valid @ModelAttribute("product") Product product,
+    @PostMapping("/update-product/{id}")
+    public String updateProduct(@PathVariable("id") long id, @Valid @ModelAttribute("product") Product product,
                              BindingResult result,
                              Model model) {
-        Optional<Product> existingProduct = productService.getRepository().findById(product.getId());
+        Product existingProduct = productService.getRepository().findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid User Id:" + id));
 
-        if (existingProduct != null)
-            result.rejectValue("reference", null,
-                    "Product not found !!!");
+//        if (existingProduct != null)
+//            result.rejectValue("reference", null,
+//                    "Product not found !!!");
 
         if (result.hasErrors()) {
             model.addAttribute("product", product);
-            return "/user/show-update-product-form";
+            return "editProduct";
         }
 
-        productService.getRepository().save(product);
+        product.setId(id);
+        productService.updateProduct(product);
         return "redirect:/user/product-list";
     }
 
@@ -114,7 +117,7 @@ public class UserController {
     public String deleteProduct(@PathVariable(value = "id") long id) {
 
         productService.getRepository().deleteById(id);
-        return "redirect:/";
+        return "redirect:/user/product-list";
     }
 
 

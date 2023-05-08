@@ -14,15 +14,7 @@ public class LoginController {
     @Autowired
     UserService userService;
 
-    @RequestMapping("/login")
-    public String viewLoginPage() {
-        return "login";
-    }
 
-    @RequestMapping("/access-denied")
-    public String viewAccessDeniedPage() {
-        return "accessDenied";
-    }
 
 //    @RequestMapping("/login/{role}")
 //    public String submitLoginPage() {

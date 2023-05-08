@@ -65,7 +65,7 @@ public class AdminController {
 
         if (result.hasErrors()) {
             model.addAttribute("user", user);
-            return "/admin/show-add-user-form";
+            return "addUser";
         }
 
         if(role.equals("ADMIN"))
@@ -86,11 +86,11 @@ public class AdminController {
 
         if (existingUser != null)
             result.rejectValue("email", null,
-                    "User already registered !!!");
+                    "Un utilisateur avec cette Email existe déjà !!!");
 
         if (result.hasErrors()) {
             model.addAttribute("user", user);
-            return "/admin/show-add-user-form";
+            return "addUser";
         }
 
         userService.saveNewUser(user);
@@ -102,28 +102,31 @@ public class AdminController {
     public String showFormForUpdateUser(@PathVariable(value = "id") long id, Model model) {
 
         // get user from the service
-        Optional<User> user = userService.getRepository().findById(id);
+        User user = userService.getRepository().findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid User Id:" + id));
 
         // set employee as a model attribute to pre-populate the form
         model.addAttribute("user", user);
         return "editUser";
     }
 
-    @PostMapping("/update-user")
-    public String updateUser(@Valid @ModelAttribute("user") User user,
+    @PostMapping("/update-user/{id}")
+    public String updateUser( @PathVariable("id") long id, @Valid User user,
                                BindingResult result,
                                Model model) {
-        Optional<User> existingUser = userService.getRepository().findById(user.getId());
+        User existingUser = userService.getRepository().findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid User Id:" + id));
 
-        if (existingUser != null)
-            result.rejectValue("email", null,
-                    "User not found !!!");
+//        if (existingUser != null)
+//            result.rejectValue("email", null,
+//                    "User not found !!!");
 
         if (result.hasErrors()) {
             model.addAttribute("user", user);
-            return "/admin/show-update-user-form";
+            return "editUser";
         }
 
+        user.setId(id);
         userService.updateUser(user);
         return "redirect:/admin/user-list";
     }
@@ -133,7 +136,7 @@ public class AdminController {
 
         // call delete employee method
         userService.getRepository().deleteById(id);
-        return "redirect:/";
+        return "redirect:/admin/user-list";
     }
 
 

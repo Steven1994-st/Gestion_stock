@@ -1,6 +1,6 @@
 <header th:fragment="header">
   <nav class="navbar navbar-expand-md bg-dark navbar-dark">
-    <a class="navbar-brand" th:href="@{/user/user-list}">
+    <a class="navbar-brand" th:href="@{/user/product-list}">
       Gestion de produit
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topNavbar">
@@ -9,12 +9,41 @@
     <div class="collapse navbar-collapse" id="topNavbar">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/admin/user-list}">Gestion de personnel</a>
+<!--          <a class="nav-link" th:href="@{/admin/user-list}" sec:authorize="hasRole('ADMIN')">-->
+          <a class="nav-link" th:href="@{/admin/user-list}" sec:authorize="hasAnyAuthority('ADMIN')">
+          Gestion de personnel
+          </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" th:href="@{/user/profile}">Profil</a>
         </li>
       </ul>
     </div>
+
+    <div class="navbar-collapse collapse">
+<!--      <ul class="nav navbar-nav">-->
+<!--        <li th:classappend="${module == 'home' ? 'active' : ''}">-->
+<!--          <a href="#" th:href="@{/}">Home</a>-->
+<!--        </li>-->
+<!--        <li th:classappend="${module == 'tasks' ? 'active' : ''}">-->
+<!--          <a href="#" th:href="@{/task}">Tasks</a>-->
+<!--        </li>-->
+<!--      </ul>-->
+      <ul class="nav navbar-nav navbar-right">
+<!--        <li th:if="${#authorization.expression('!isAuthenticated()')}">-->
+<!--          <a href="/signin" th:href="@{/signin}">-->
+<!--            <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>&nbsp;Sign in-->
+<!--          </a>-->
+<!--        </li>-->
+        <li style="margin-left: 150px">
+<!--        <li th:if="${#authorization.expression('isAuthenticated()')}" style="margin-left: 150px">-->
+          <a href="/logout" th:href="@{/logout}" onclick="$('#form').submit();">
+            <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>&nbsp;Déconnexion
+          </a>
+<!--          <form style="visibility: hidden" id="form" method="post" action="#" th:action="@{/logout}"></form>-->
+        </li>
+      </ul>
+    </div>
+
   </nav>
 </header>

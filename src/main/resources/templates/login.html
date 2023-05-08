@@ -12,12 +12,13 @@
 <div class="container">
   <div class="row mt-5">
     <div class="col-6 mx-auto">
-      <h1>Login Form</h1>
+      <h1 style="margin-bottom: 10px">Connexion</h1>
+      <hr>
       <div th:if="${param.error}">
-        <div class="alert alert-danger">Invalid Email or Password !!!</div>
+        <div class="alert alert-danger">Mot de passe ou Email invalide!!!</div>
       </div>
       <div th:if="${param.logout}">
-        <div class="alert alert-success">You have been logged out !!!</div>
+        <div class="alert alert-success">Vous avez été deconnecté !!!</div>
       </div>
       <form
               class="form-horizontal"
@@ -36,7 +37,7 @@
                  type="password">
         </div>
         <div class="mb-3">
-          <button class="btn btn-primary mb-3" type="submit">Login</button>
+          <button class="btn btn-primary mb-3" type="submit">Se connecter</button>
 <!--          or <a class="link-primary" th:href="@{/admin/registration}">Register</a>-->
         </div>
       </form>

@@ -6,7 +6,7 @@ import com.gestion.utils.Code;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.SerializationUtils;
 
@@ -17,7 +17,7 @@ public class UserService {
     protected static Logger logger;
 
     @Autowired
-    BCryptPasswordEncoder bCryptPasswordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     AccountService accountService;
@@ -82,7 +82,7 @@ public class UserService {
         }else { //      if it's a new user and doesn't exist yet
             user.setCreationDate(new Date());
             userFound = SerializationUtils.clone(user);
-            String hashPW = bCryptPasswordEncoder.encode(user.getPassword());
+            String hashPW = passwordEncoder.encode(user.getPassword());
             userFound.setPassword(hashPW);
             userFound.setToken(Code.generateCode());
 //            userFound.setRole(User.ROLE.EMPLOYEE);
@@ -104,7 +104,7 @@ public class UserService {
 
         userFound.setFirstname(user.getFirstname());
         userFound.setName(user.getName());
-        userFound.setLogin(user.getLogin());
+//        userFound.setLogin(user.getLogin());
         userFound.setPhone(user.getPhone());
 
         userFound.setModificationDate(new Date());
@@ -123,7 +123,7 @@ public class UserService {
         User userFound = getRepository()
                 .findById(user.getId()).get();
 
-        String hashPW = bCryptPasswordEncoder.encode(user.getPassword());
+        String hashPW = passwordEncoder.encode(user.getPassword());
         userFound.setPassword(hashPW);
         userFound.setModificationDate(new Date());
 
@@ -138,7 +138,7 @@ public class UserService {
      */
     public boolean checkPassword(User user){
         User result = getRepository().findById(user.getId()).get();
-        return bCryptPasswordEncoder.matches(user.getPassword(), result.getPassword());
+        return passwordEncoder.matches(user.getPassword(), result.getPassword());
     }
 
 }

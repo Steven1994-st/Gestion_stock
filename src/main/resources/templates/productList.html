@@ -11,10 +11,11 @@
 </head>
 
 <body>
-<div th:replace="fragments/header :: header"></div>
+<div th:replace="~{fragments/header :: header}"></div>
 
 <div class="container my-2">
-    <h1>Liste des produits</h1>
+    <h1 style="margin-bottom: 10px">Liste des produits</h1>
+    <hr>
 
     <a th:href="@{/user/show-add-product-form}" class="btn btn-primary btn-sm mb-3"> Ajout produit </a>
 
@@ -31,11 +32,11 @@
         </thead>
         <tbody>
         <tr th:each="product : ${listProduct}">
-            <td th:text="${user.reference}"></td>
-            <td th:text="${user.name}"></td>
-            <td th:text="${user.description}"></td>
-            <td th:text="${user.price}"></td>
-            <td th:text="${user.quantity}"></td>
+            <td th:text="${product.reference}"></td>
+            <td th:text="${product.name}"></td>
+            <td th:text="${product.description}"></td>
+            <td th:text="${product.price}"></td>
+            <td th:text="${product.quantity}"></td>
             <td> <a th:href="@{/user/show-update-product-form/{id}(id=${product.id})}" class="btn btn-primary">Modifier</a>
                 <a th:href="@{/user/delete-product-by-id/{id}(id=${product.id})}" class="btn btn-danger">Supprimer</a>
             </td>
