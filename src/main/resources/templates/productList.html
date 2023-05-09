@@ -19,6 +19,20 @@
 
     <a th:href="@{/user/show-add-product-form}" class="btn btn-primary btn-sm mb-3"> Ajout produit </a>
 
+    <div class="input-group mb-3">
+        <form th:action="@{/user/product-search}" method="get">
+            <div style="display: flex;">
+                <input type="search" id="keyword" name="keyword" th:value="${keyword}"
+                       placeholder="Référence ou nom du produit" aria-describedby="button-addon5"
+                       class="form-control col-10">
+                <button id="button-addon5" type="submit" class="btn btn-primary col-4">
+                    Rechercher <i class="fa fa-search"> </i>
+                </button>
+            </div>
+
+        </form>
+    </div>
+
     <table border="1" class="table table-striped table-responsive-md">
         <thead>
         <tr>

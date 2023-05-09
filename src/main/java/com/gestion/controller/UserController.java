@@ -120,7 +120,16 @@ public class UserController {
         return "redirect:/user/product-list";
     }
 
-
+    @RequestMapping("/product-search")
+    public String searchProduct(Model model, String keyword) {
+        if(keyword!=null) {
+            List<Product> productList = productService.search(keyword);
+            model.addAttribute("listProduct", productList);
+        }else {
+            model.addAttribute("listProduct", productService.getRepository().findAll());
+        }
+        return "productList";
+    }
 
 
     // Resources for Product

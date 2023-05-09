@@ -5,33 +5,40 @@
   <meta charset="utf-8">
   <title>Gestion du personnel</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
 </head>
 
 <body>
+<div th:replace="~{fragments/header :: header}"></div>
+
 <div class="container">
-  <h1>Modification utilisateur</h1>
-  <hr>
+  <div class="row mt-5">
+    <div class="col-6 mx-auto">
+      <h1>Modification utilisateur</h1>
+      <hr>
 
-  <form action="#" th:action="@{/admin/update-user/{id}(id=${user.id})}"
-        th:object="${user}" method="POST">
-    <input type="text" th:field="*{firstname}" id="firstname" placeholder="Prénom" class="form-control mb-4 col-4">
+      <form action="#" th:action="@{/admin/update-user/{id}(id=${user.id})}"
+            th:object="${user}" method="POST">
+        <input type="text" th:field="*{firstname}" id="firstname" placeholder="Prénom" class="form-control mb-4 col-8">
 
-    <input type="text" th:field="*{name}" id="name" placeholder="Nom" class="form-control mb-4 col-4">
+        <input type="text" th:field="*{name}" id="name" placeholder="Nom" class="form-control mb-4 col-8">
 
-    <input type="text" th:field="*{email}" id="email" placeholder="Email" class="form-control mb-4 col-4">
+        <input type="text" th:field="*{email}" id="email" placeholder="Email" class="form-control mb-4 col-8">
 
-    <label>Role</label>
-    <select name="role" th:field="*{role}">
-      <option th:value="EMPLOYEE" th:text="Employee"> </option>
-      <option th:value="ADMIN" th:text="Admin"></option>
-    </select><br><br>
+        <label>Role</label>
+        <select name="role" th:field="*{role}">
+          <option th:value="EMPLOYEE" th:text="Employee"> </option>
+          <option th:value="ADMIN" th:text="Admin"></option>
+        </select><br><br>
 
-    <button type="submit" class="btn btn-info col-2"> Valider</button>
-  </form>
+        <button type="submit" class="btn btn-primary col-2"> Valider</button>
+      </form>
 
-  <hr>
+      <hr>
 
-  <a th:href="@{/admin/user-list}"> Retourner à la liste d'utilisateur</a>
+      <a th:href="@{/admin/user-list}"> Retourner à la liste d'utilisateur</a>
+    </div>
+  </div>
 </div>
 </body>
 

@@ -29,13 +29,14 @@
 <!--          <a href="#" th:href="@{/task}">Tasks</a>-->
 <!--        </li>-->
 <!--      </ul>-->
-      <ul class="nav navbar-nav navbar-right">
+      <ul class="nav navbar-nav navbar-right" style="margin-left: 150px">
+
 <!--        <li th:if="${#authorization.expression('!isAuthenticated()')}">-->
 <!--          <a href="/signin" th:href="@{/signin}">-->
 <!--            <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>&nbsp;Sign in-->
 <!--          </a>-->
 <!--        </li>-->
-        <li style="margin-left: 150px">
+        <li>
 <!--        <li th:if="${#authorization.expression('isAuthenticated()')}" style="margin-left: 150px">-->
           <a href="/logout" th:href="@{/logout}" onclick="$('#form').submit();">
             <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>&nbsp;Déconnexion
