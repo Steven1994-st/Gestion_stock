@@ -7,14 +7,15 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping(value="user")
@@ -28,9 +29,15 @@ public class UserController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private CustomerService customerService;
+
 
     @Autowired
     AccountService accountService;
+
+    @Autowired
+    UserService userService;
 
     @Autowired
     private NotificationService notificationService;
@@ -40,7 +47,6 @@ public class UserController {
 
     @Autowired
     private PaymentRepository paymentRepository;
-
 
     public UserController() {
         this.logger = LoggerFactory.getLogger(this.getClass());
@@ -75,8 +81,7 @@ public class UserController {
             model.addAttribute("product", product);
             return "addProduct";
         }
-        product.setId(product.getId());
-        productService.updateProduct(product);
+        productService.getRepository().save(product);
         return "redirect:/user/product-list";
     }
 
@@ -87,7 +92,7 @@ public class UserController {
         Product product = productService.getRepository().findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Product Id:" + id));
 
-        // set employee as a model attribute to pre-populate the form
+        // set product as a model attribute to pre-populate the form
         model.addAttribute("product", product);
         return "editProduct";
     }
@@ -132,236 +137,175 @@ public class UserController {
     }
 
 
-    // Resources for Product
 
-    /**
-     * Find Product by ID
-     * @param id
-     * @return Product retrieved
-     */
-    @GetMapping(value = "product/find-by-id/{id}")
-    public ResponseEntity<?> findProductById(@PathVariable Long id){
-        logger.debug("Call : Get Product by id");
-        Optional<Product> result = productService.getRepository().findById(id);
-        return result.map(ResponseEntity::ok).orElse(null);
+    // RESOURCES FOR CUSTOMER
+
+    @RequestMapping("/customer-list")
+    public String viewCustomerListPage(Model model) {
+        model.addAttribute("listCustomer", customerService.getRepository().findAll());
+        return "customerList";
     }
 
-    /**
-     * Find all Products
-     * @return  List of all the Product retrieved
-     */
-    @GetMapping("product/list")
-    public ResponseEntity<?> getAllProducts() {
-        List<Product> entities = (List<Product>) productService.getRepository().findAll();
-        return ResponseEntity.ok(entities);
+    @RequestMapping("/show-add-customer-form")
+    public String viewAddCustomerForm(Model model) {
+        Customer customer = new Customer();
+        model.addAttribute("customer", customer);
+        return "addCustomer";
     }
 
-    /**
-     * Find Product by nom or reference
-     * @param keyword
-     * @return Product retrieved
-     */
-    @GetMapping(value = "product/get-by-name-or-reference/{keyword}")
-    public ResponseEntity<?> getProductByNameOrRef(@PathVariable String keyword){
-        logger.debug("Call : Get Product by name or Reference");
-        Product result = productService.getRepository()
-                .findProductByNameOrReference(keyword);
-        return ResponseEntity.ok(result);
+    @PostMapping("/add-customer")
+    public String saveNewCustomer(@Valid @ModelAttribute("customer") Customer customer,
+                                 BindingResult result,
+                                 Model model) {
+        Customer customerFound = customerService.getRepository()
+                .findByEmail(customer.getEmail());
+
+        if (customerFound != null)
+            result.rejectValue("email", null,
+                    "Un client existe déjà avec cet email !!!");
+
+        if (result.hasErrors()) {
+            model.addAttribute("customer", customer);
+            return "addCustomer";
+        }
+        customerService.getRepository().save(customer);
+        return "redirect:/user/customer-list";
     }
 
-    /**
-     * Delete Product by ID
-     * @param id
-     * @return true if product deleted or false else
-     */
-    @DeleteMapping(value = "product/delete-by-id/{id}")
-    public ResponseEntity<?> deleteProductById(@PathVariable Long id){
-        logger.debug("Call : delete product by id");
+    @GetMapping("/show-update-customer-form/{id}")
+    public String showFormForUpdateCustomer(@PathVariable(value = "id") long id, Model model) {
+
+        // get customer from the service
+        Customer customer = customerService.getRepository().findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Customer Id:" + id));
+
+        // set customer as a model attribute to pre-populate the form
+        model.addAttribute("customer", customer);
+        return "editCustomer";
+    }
+
+    @PostMapping("/update-customer/{id}")
+    public String updateCustomer(@PathVariable("id") long id, @Valid @ModelAttribute("customer") Customer customer,
+                                BindingResult result,
+                                Model model) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("customer", customer);
+            return "editCustomer";
+        }
+
+        customer.setId(id);
+        customerService.updateCustomer(customer);
+        return "redirect:/user/customer-list";
+    }
+
+    @GetMapping("/delete-customer-by-id/{id}")
+    public String deleteCustomer(@PathVariable(value = "id") long id) {
+
         productService.getRepository().deleteById(id);
-        return ResponseEntity.ok(true);
+        return "redirect:/user/customer-list";
     }
 
-
-    // Resources for Order
-
-    /**
-     * Save or update Order
-     * @param order to be created
-     * @return The created order or update if already exists
-     */
-    @PostMapping("order/save")
-    public ResponseEntity<?> saveOrder(@RequestBody Order order) {
-        logger.debug("Call : Save Order");
-        return ResponseEntity.ok(orderService.getRepository().save(order));
+    @RequestMapping("/customer-search")
+    public String searchCustomer(Model model, String keyword) {
+        if(keyword!=null) {
+            List<Customer> customerList = customerService.search(keyword);
+            model.addAttribute("listCustomer", customerList);
+        }else {
+            model.addAttribute("listCustomer", productService.getRepository().findAll());
+        }
+        return "customerList";
     }
 
-    /**
-     * Find Order by ID
-     * @param id
-     * @return Order retrieved
-     */
-    @GetMapping(value = "order/find-by-id/{id}")
-    public ResponseEntity<?> findOrderById(@PathVariable Long id){
-        logger.debug("Call : Get Order by id");
-        Optional<Order> result = orderService.getRepository().findById(id);
-        return result.map(ResponseEntity::ok).orElse(null);
-    }
-
-    /**
-     * Search Orders by Customer ID
-     * @param idCustomer
-     * @return Order list retrieved
-     */
-    @GetMapping(value = "order/get-by-customer/{idCustomer}")
-    public ResponseEntity<?> getOrderByCustomer(@PathVariable String idCustomer){
-        logger.debug("Call : Get Order by Client ID");
-        List<Order> entities = orderService.getRepository().findOrderByCustomer(idCustomer);
-        return ResponseEntity.ok(entities);
-    }
-
-    /**
-     * Find all Order
-     * @return  List of all the Order retrieved
-     */
-    @GetMapping("order/list")
-    public ResponseEntity<?> getAllOrders() {
-        List<Order> entities = (List<Order>) orderService.getRepository().findAll();
-        return ResponseEntity.ok(entities);
-    }
-
-    /**
-     * Delete Order by ID
-     * @param id
-     * @return true if order deleted or false else
-     */
-    @DeleteMapping(value = "order/delete-by-id/{id}")
-    public ResponseEntity<?> deleteOrderById(@PathVariable Long id){
-        logger.debug("Call : delete order by id");
-        orderService.getRepository().deleteById(id);
-        return ResponseEntity.ok(true);
-    }
-
-
-    // RESOURCES FOR NOTIFICATION
-
-    /**
-     * Save notification
-     * @param notification
-     * @return
-     */
-    @PostMapping(value = "notification/save")
-    public ResponseEntity<?> saveNotification(@RequestBody Notification notification){
-        logger.debug("Call : Save Notification");
-
-        return ResponseEntity.ok(notificationService.saveNotification(notification));
-    }
-
-    /**
-     * Find All Notification by User
-     * @param userId for User ID
-     * @return
-     */
-    @GetMapping(value = "notification/get-by-user/{userId}")
-    public ResponseEntity<?> findNotificationsByUser(@PathVariable Long userId){
-        logger.debug("Call : Find All Notifications by User");
-
-        return ResponseEntity.ok(notificationService.getRepository()
-                .findNotificationsByUser(userId));
-    }
-
-    /**
-     * Find Unread Notifications by User
-     * @param userId for User ID
-     * @return
-     */
-    @GetMapping(value = "notification/unread/get-by-user/{userId}")
-    public ResponseEntity<?> findUnreadNotificationsByUser(@PathVariable Long userId){
-        logger.debug("Call : Find Unread Notifications by User");
-
-        return ResponseEntity.ok(notificationService.getRepository()
-                .findNotificationsByStatusAndUser(userId, Notification.NOTIFICATION_STATUS.UNREAD));
-    }
 
     // RESOURCES FOR HOLIDAY
 
-    /**
-     * Save or update Holiday
-     * @param holiday
-     * @return Holiday saved or updated
-     */
-    @PostMapping(value = "holiday/save")
-    public ResponseEntity<?> saveHoliday(@RequestBody Holiday holiday){
-        logger.debug("Call : Save Holiday");
+    @RequestMapping("/holiday-list")
+    public String viewHolidayListPage(Model model) {
 
-        return ResponseEntity.ok(holidayService.getRepository()
-                .save(holiday));
+        //Récupérer l'utilisateur connecté
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User curentUser = userService.getRepository().findByEmail(username);
+
+        model.addAttribute("listHoliday",
+                holidayService.getRepository().findHolidaysByUser(curentUser.getId()));
+        return "userHolidayList";
     }
 
-    /**
-     * Find All Holiday by User
-     * @param userId for User ID
-     * @return
-     */
-    @GetMapping(value = "holiday/get-by-user/{userId}")
-    public ResponseEntity<?> findHolidaysByUser(@PathVariable Long userId){
-        logger.debug("Call : Find All Holiday by User");
+    @RequestMapping("/show-add-holiday-form")
+    public String viewAddHolidayForm(Model model) {
+        Holiday holiday = new Holiday();
 
-        return ResponseEntity.ok(holidayService.getRepository()
-                .findHolidaysByUser(userId));
+        //Récupérer l'utilisateur connecté
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User curentUser = userService.getRepository().findByEmail(username);
+        holiday.setUser(curentUser);
+
+        model.addAttribute("holiday", holiday);
+        return "userAddHoliday";
     }
 
-    /**
-     * Find Processing Holiday by User
-     * @param userId for User ID
-     * @return
-     */
-    @GetMapping(value = "holiday/processing/get-by-user/{userId}")
-    public ResponseEntity<?> findProcessingHolidaysByUser(@PathVariable Long userId){
-        logger.debug("Call : Find Processing holiday by User");
+    @PostMapping("/add-holiday")
+    public String saveNewHoliday(@Valid @ModelAttribute("holiday") Holiday holiday,
+                                 BindingResult result,
+                                 Model model) {
 
-        return ResponseEntity.ok(holidayService.getRepository()
-                .findHolidaysByStatusAndUser(userId, Holiday.HOLIDAY_STATUS.PROCESSING));
+        if (result.hasErrors()) {
+            model.addAttribute("holiday", holiday);
+            return "userAddHoliday";
+        }
+        holiday.setStatus(Holiday.HOLIDAY_STATUS.PROCESSING);
+        holidayService.getRepository().save(holiday);
+        return "redirect:/user/holiday-list";
     }
 
-    /**
-     * Find Accept Holiday by User
-     * @param userId for User ID
-     * @return
-     */
-    @GetMapping(value = "holiday/accept/get-by-user/{userId}")
-    public ResponseEntity<?> findAcceptHolidaysByUser(@PathVariable Long userId){
-        logger.debug("Call : Find Accept holiday by User");
+    @GetMapping("/show-update-holiday-form/{id}")
+    public String showFormForUpdateHoliday(@PathVariable(value = "id") long id, Model model) {
 
-        return ResponseEntity.ok(holidayService.getRepository()
-                .findHolidaysByStatusAndUser(userId, Holiday.HOLIDAY_STATUS.ACCEPT));
+        // get holiday from the service
+        Holiday holiday = holidayService.getRepository().findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Customer Id:" + id));
+
+        // set holiday as a model attribute to pre-populate the form
+        model.addAttribute("holiday", holiday);
+        return "userEditHoliday";
     }
 
-    /**
-     * Find Refuse Holiday by User
-     * @param userId for User ID
-     * @return
-     */
-    @GetMapping(value = "holiday/refuse/get-by-user/{userId}")
-    public ResponseEntity<?> findRefuseHolidaysByUser(@PathVariable Long userId){
-        logger.debug("Call : Find Refuse holiday by User");
+    @PostMapping("/update-holiday/{id}")
+    public String updateHoliday(@PathVariable("id") long id, @Valid @ModelAttribute("holiday") Holiday holiday,
+                                BindingResult result,
+                                Model model) {
 
-        return ResponseEntity.ok(holidayService.getRepository()
-                .findHolidaysByStatusAndUser(userId, Holiday.HOLIDAY_STATUS.REFUSE));
+        if (result.hasErrors()) {
+            model.addAttribute("holiday", holiday);
+            return "userEditHoliday";
+        }
+
+        holiday.setId(id);
+        holiday.setStatus(Holiday.HOLIDAY_STATUS.PROCESSING);
+        holidayService.updateHoliday(holiday);
+        return "redirect:/user/holiday-list";
     }
 
+    @GetMapping("/delete-holiday-by-id/{id}")
+    public String deleteHoliday(@PathVariable(value = "id") long id) {
 
-    // RESOURCES FOR PAYMENT
-
-    /**
-     * Save or update payment
-     * @param payment
-     * @return Payment saved or updated
-     */
-    @PostMapping(value = "payment/save")
-    public ResponseEntity<?> savePayment(@RequestBody Payment payment){
-        logger.debug("Call : Save Payment");
-
-        return ResponseEntity.ok(paymentRepository.save(payment));
+        holidayService.getRepository().deleteById(id);
+        return "redirect:/user/holiday-list";
     }
+
+    @RequestMapping("/holiday-search")
+    public String searchHoliday(Model model, String keyword) {
+        if(keyword!=null) {
+            List<Holiday> holidayList = holidayService.search(keyword);
+            model.addAttribute("listHoliday", holidayList);
+        }else {
+            model.addAttribute("listHoliday", holidayService.getRepository().findAll());
+        }
+        return "userHolidayList";
+    }
+
 
 }

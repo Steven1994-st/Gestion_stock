@@ -30,20 +30,12 @@ import java.util.stream.Collectors;
 public class AccountController {
     protected Logger logger;
 
-//    @Autowired
-//    JwtUtils jwtUtils;
-
     @Autowired
     UserService userService;
 
     @Autowired
     AccountService accountService;
 
-
-//    public AccountController(AuthenticationManager authenticationManager) {
-//        this.authenticationManager = authenticationManager;
-//        this.logger = LoggerFactory.getLogger(this.getClass());
-//    }
 
     public AccountController() {
         this.logger = LoggerFactory.getLogger(this.getClass());
@@ -82,32 +74,6 @@ public class AccountController {
 //    public String SaveNewUser(@ModelAttribute("user") User user) {
 //        userService.saveNewEmployee(user);
 //        return "redirect:/";
-//    }
-
-
-    /**
-     * User login
-     * @param loginRequest
-     * @return
-     */
-//    @PostMapping("login")
-//    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
-//        Authentication authentication = authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        User user = userService.findByLogin(loginRequest.getUsername());
-//        if(!user.isActive()){
-//            throw new RuntimeException("Account not activated");
-//        }
-//        String jwt = jwtUtils.generateJwtToken(authentication);
-//
-//        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-//        List<String> roles = userDetails.getAuthorities().stream()
-//                .map(item -> item.getAuthority())
-//                .collect(Collectors.toList());
-//        return ResponseEntity.ok(new JwtResponse(jwt,
-//                userDetails.getUsername(),
-//                roles, user));
 //    }
 
     /**

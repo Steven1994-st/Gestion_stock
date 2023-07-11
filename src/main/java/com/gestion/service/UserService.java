@@ -1,8 +1,16 @@
 package com.gestion.service;
 
+import com.gestion.model.Product;
 import com.gestion.model.User;
 import com.gestion.repository.UserRepository;
 import com.gestion.utils.Code;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.SerializationUtils;
 
 import java.util.Date;
+import java.util.List;
 
 @Service()
 public class UserService {
@@ -34,15 +43,6 @@ public class UserService {
     }
 
     public UserService() {
-    }
-
-    /**
-     * Find a user by login
-     * @param login
-     * @return
-     */
-    public User findByLogin(String login){
-        return getRepository().findByEmail(login);
     }
 
     /**
@@ -141,4 +141,27 @@ public class UserService {
         return passwordEncoder.matches(user.getPassword(), result.getPassword());
     }
 
+
+    @PersistenceContext
+    private EntityManager entityManager;
+    /**
+     * Search name or firstname by keyword in DB
+     * @param keyword
+     * @return
+     */
+    public List<User> search(String keyword) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
+
+        Root<User> root = criteriaQuery.from(User.class);
+        String criteriaStr = "%" + keyword.toUpperCase() + "%";
+
+        Predicate predicate = criteriaBuilder.or(criteriaBuilder
+                        .like(criteriaBuilder.upper(root.get("name")), criteriaStr),
+                criteriaBuilder.like(criteriaBuilder.upper(root.get("firstname")), criteriaStr));
+        criteriaQuery.where(predicate);
+
+        TypedQuery<User> query = entityManager.createQuery(criteriaQuery);
+        return query.getResultList();
+    }
 }

@@ -1,21 +1,18 @@
 package com.gestion.controller;
 
-import com.gestion.model.Product;
+import com.gestion.model.Holiday;
 import com.gestion.model.User;
-import com.gestion.service.AccountService;
-import com.gestion.service.ProductService;
-import com.gestion.service.UserService;
+import com.gestion.service.*;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.List;
 
 
 @Controller
@@ -32,6 +29,9 @@ public class AdminController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    HolidayService holidayService;
 
 
     public AdminController() {
@@ -132,27 +132,99 @@ public class AdminController {
     }
 
     @GetMapping("/delete-user-by-id/{id}")
-    public String deleteEmployee(@PathVariable(value = "id") long id) {
+    public String deleteUser(@PathVariable(value = "id") long id) {
 
-        // call delete employee method
+        // call delete user method
         userService.getRepository().deleteById(id);
         return "redirect:/admin/user-list";
     }
 
 
-
-
-
-    // Resources for Product
-
-    /**
-     * Save or update Product
-     * @param product to be created
-     * @return The created Product or update if already exists
-     */
-    @PostMapping("product/save")
-    public ResponseEntity<?> saveProduct(@RequestBody Product product) {
-        logger.debug("Call : Save Product");
-        return ResponseEntity.ok(productService.getRepository().save(product));
+    @RequestMapping("/user-search")
+    public String searchUser(Model model, String keyword) {
+        if(keyword!=null) {
+            List<User> userList = userService.search(keyword);
+            model.addAttribute("listUser", userList);
+        }else {
+            model.addAttribute("listUser", userService.getRepository().findAll());
+        }
+        return "userList";
     }
+
+
+    // RESOURCES FOR HOLIDAY
+
+    @RequestMapping("/holiday-list")
+    public String viewHolidayListPage(Model model) {
+        model.addAttribute("listHoliday", holidayService.getRepository().findAll());
+        return "adminHolidayList";
+    }
+
+    @RequestMapping("/show-add-holiday-form")
+    public String viewAddHolidayForm(Model model) {
+        Holiday holiday = new Holiday();
+
+        model.addAttribute("userList", userService.getRepository().findAll());
+        model.addAttribute("holiday", holiday);
+        return "adminAddHoliday";
+    }
+
+    @PostMapping("/add-holiday")
+    public String saveNewHoliday(@Valid @ModelAttribute("holiday") Holiday holiday,
+                                  BindingResult result,
+                                  Model model) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("holiday", holiday);
+            return "adminAddHoliday";
+        }
+        holidayService.getRepository().save(holiday);
+        return "redirect:/admin/holiday-list";
+    }
+
+    @GetMapping("/show-update-holiday-form/{id}")
+    public String showFormForUpdateHoliday(@PathVariable(value = "id") long id, Model model) {
+
+        // get holiday from the service
+        Holiday holiday = holidayService.getRepository().findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Customer Id:" + id));
+
+        // set holiday as a model attribute to pre-populate the form
+        model.addAttribute("holiday", holiday);
+        return "adminEditHoliday";
+    }
+
+    @PostMapping("/update-holiday/{id}")
+    public String updateHoliday(@PathVariable("id") long id, @Valid @ModelAttribute("holiday") Holiday holiday,
+                                 BindingResult result,
+                                 Model model) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("holiday", holiday);
+            return "adminEditHoliday";
+        }
+
+        holiday.setId(id);
+        holidayService.updateHoliday(holiday);
+        return "redirect:/admin/holiday-list";
+    }
+
+    @GetMapping("/delete-holiday-by-id/{id}")
+    public String deleteHoliday(@PathVariable(value = "id") long id) {
+
+        holidayService.getRepository().deleteById(id);
+        return "redirect:/user/holiday-list";
+    }
+
+    @RequestMapping("/holiday-search")
+    public String searchHoliday(Model model, String keyword) {
+        if(keyword!=null) {
+            List<Holiday> holidayList = holidayService.search(keyword);
+            model.addAttribute("listHoliday", holidayList);
+        }else {
+            model.addAttribute("listHoliday", holidayService.getRepository().findAll());
+        }
+        return "adminHolidayList";
+    }
+
 }

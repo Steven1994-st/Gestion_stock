@@ -1,19 +1,15 @@
 package com.gestion.security;
 
 import com.gestion.model.User;
-import com.gestion.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 
 /**
@@ -25,39 +21,11 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 @EnableMethodSecurity
 public class WebSecurityConfig {
 
-//    @Autowired
-//    BCryptPasswordEncoder bCryptPasswordEncoder;
-//
-//    @Autowired
-//    private AuthEntryPointJwt unauthorizedHandler;
-
-//    @Autowired
-//    private AccessDeniedHandler accessDeniedHandler;
-
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        return new CustomUserDetailsService();
-//    }
 
     @Bean
     public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-//    @Bean
-//    public AuthenticationFailureHandler getAuthenticationFailureHandler() {
-//        return new CustomAuthFailureHandler();
-//    }
-
-
-//    @Bean
-//    public AuthenticationManager authenticationManager(HttpSecurity http, BCryptPasswordEncoder bCryptPasswordEncoder, UserDetailsService userDetailsService)
-//            throws Exception {
-//        return http.getSharedObject(AuthenticationManagerBuilder.class)
-//                .userDetailsService(userDetailsService)
-//                .passwordEncoder(bCryptPasswordEncoder)
-//                .and()
-//                .build();
-//    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -93,7 +61,8 @@ public class WebSecurityConfig {
                 .deleteCookies("JSESSIONID")
                 .permitAll()
                 .and().exceptionHandling().accessDeniedPage("/access-denied");
-//        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterAfter(
+//                new CustomFilter(), BasicAuthenticationFilter.class);
 
         return http.build();
     }

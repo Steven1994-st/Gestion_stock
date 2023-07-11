@@ -19,7 +19,6 @@ public class User extends Persistent{
     @Column(name = "phone")
     private String phone;
 
-    private String login;
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -53,7 +52,6 @@ public class User extends Persistent{
         this.firstname = firstname;
         this.email = email;
         this.phone = phone;
-        this.login = login;
         this.password = password;
         this.token = token;
         this.active = active;
@@ -92,13 +90,6 @@ public class User extends Persistent{
         this.phone = phone;
     }
 
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
 
     public String getPassword() {
         return password;

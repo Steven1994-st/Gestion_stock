@@ -1,6 +1,7 @@
 package com.gestion.service;
 
 import com.gestion.model.User;
+import com.gestion.repository.UserRepository;
 import com.gestion.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
-    public UserService userService;
+    public UserRepository userRepository;
 
     public CustomUserDetailsService() {
     }
@@ -28,7 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        User user = userService.findByLogin(login);
+        User user = userRepository.findByEmail(login);
         if(user == null) throw new UsernameNotFoundException("User Not Found with Email: " + login);
 
         return UserDetailsImpl.build(user);

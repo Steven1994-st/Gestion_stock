@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <title>Gestion des commandes</title>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+</head>
+
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container my-2">
+  <h1 style="margin-bottom: 10px">Liste des commandes</h1>
+  <hr>
+
+  <a th:href="@{/user/show-add-order-form}" class="btn btn-primary btn-sm mb-3"> Ajout commande </a>
+
+  <div class="input-group mb-3">
+    <form th:action="@{/user/order-search}" method="get">
+      <div style="display: flex;">
+        <input type="search" id="keyword" name="keyword" th:value="${keyword}"
+               placeholder="Description commande ou nom du client" aria-describedby="button-addon5"
+               class="form-control col-10">
+        <button id="button-addon5" type="submit" class="btn btn-primary col-4">
+          Rechercher <i class="fa fa-search"> </i>
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <table border="1" class="table table-striped table-responsive-md">
+    <thead>
+    <tr>
+      <th>Description</th>
+      <th>Client</th>
+      <th>Statut</th>
+      <th>Reservation?</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="order : ${listOrder}">
+      <td th:text="${order.description}"></td>
+      <td th:text="${order.customer.firstname} ${order.customer.name}"></td>
+      <td th:text="${order.status}"></td>
+      <td th:text="${order.reservation}"></td>
+      <td> <a th:href="@{/user/show-update-order-form/{id}(id=${order.id})}" clas s="btn btn-primary">Modifier</a>
+        <a th:href="@{/user/delete-order-by-id/{id}(id=${order.id})}" class="btn btn-danger">Supprimer</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+
+</html>

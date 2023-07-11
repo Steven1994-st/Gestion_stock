@@ -9,6 +9,8 @@ import java.util.List;
 @Table(name="ORDER_TAB")
 public class Order extends Persistent{
 
+    @Column(name = "description")
+    private String description;
     @Column(name = "reservation", nullable=false)
     private boolean reservation;
     @Column(name = "QR_code")
@@ -33,11 +35,13 @@ public class Order extends Persistent{
     public Order() {
     }
 
-    public Order(boolean reservation, String QR_code, ORDER_STATUS status, Customer customer, Payment payment) {
+    public Order(String description, boolean reservation, String QR_code, ORDER_STATUS status, Customer customer, List<Product> products, Payment payment) {
+        this.description = description;
         this.reservation = reservation;
         this.QR_code = QR_code;
         this.status = status;
         this.customer = customer;
+        this.products = products;
         this.payment = payment;
     }
 
@@ -87,6 +91,14 @@ public class Order extends Persistent{
 
     public void setPayment(Payment payment) {
         this.payment = payment;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**

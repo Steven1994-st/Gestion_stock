@@ -28,6 +28,20 @@
   <hr>
   <a th:href="@{/admin/show-add-user-form}" class="btn btn-primary btn-sm mb-3"> Ajout utilisateur </a>
 
+  <div class="input-group mb-3">
+    <form th:action="@{/admin/user-search}" method="get">
+      <div style="display: flex;">
+        <input type="search" id="keyword" name="keyword" th:value="${keyword}"
+               placeholder="Nom ou prénom de l'utilisateur" aria-describedby="button-addon5"
+               class="form-control col-12">
+        <button id="button-addon5" type="submit" class="btn btn-primary col-4">
+           <i class="fa fa-search"> </i>
+        </button>
+      </div>
+
+    </form>
+  </div>
+
   <table border="1" class="table table-striped table-responsive-md">
     <thead>
     <tr>

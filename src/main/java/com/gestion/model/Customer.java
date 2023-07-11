@@ -20,6 +20,9 @@ public class Customer extends Persistent{
     @Column(name = "email")
     private String email;
 
+    @Column(name = "address")
+    private String address;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy ="customer")
     @JsonIgnore
     private List<Order> orders = new ArrayList<>();
@@ -28,11 +31,13 @@ public class Customer extends Persistent{
     public Customer() {
     }
 
-    public Customer(String name, String firstname, String phone, String email) {
+    public Customer(String name, String firstname, String phone, String email, String address, List<Order> orders) {
         this.name = name;
         this.firstname = firstname;
         this.phone = phone;
         this.email = email;
+        this.address = address;
+        this.orders = orders;
     }
 
     public String getName() {
@@ -65,6 +70,14 @@ public class Customer extends Persistent{
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public List<Order> getOrders() {
