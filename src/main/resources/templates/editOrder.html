@@ -21,22 +21,40 @@
             th:object="${order}" method="POST">
         <input type="text" th:field="*{description}" id="description" placeholder="Description" class="form-control mb-4 col-8">
 
-        <input type="text" th:field="*{customer}" id="customer" placeholder="Client" class="form-control mb-4 col-8">
+        <input type="hidden" th:field="*{customer}" class="form-control mb-4 col-8">
 
-        <input type="text" th:field="*{reservation}" id="reservation" placeholder="Reservation" class="form-control mb-4 col-8">
+        <div class="mb-3">
+          <label>Reservation</label>
+          <select name="reservation" th:field="*{reservation}">
+            <option th:value=true th:text="Oui"> </option>
+            <option th:value=false th:text="Non"></option>
+          </select>
+        </div>
 
-        <input type="text" th:field="*{price}" id="price" placeholder="Prix" class="form-control mb-4 col-8">
+        <div class="mb-3">
+          <label>Statut</label>
+          <select name="role" th:field="*{status}">
+            <option th:value="PROCESSING" th:text="Traitement"> </option>
+            <option th:value="ENDED" th:text="Terminé"></option>
+          </select>
+        </div>
 
-        <input type="text" th:field="*{quantity}" id="quantity" placeholder="Quantité" class="form-control mb-4 col-8">
-
-        <br><br>
+        <div class="form-group">
+          <label for="products">Selectionner les produits</label>
+          <select class="form-control selectpicker" th:field="*{products}" id="products" multiple>
+            <option th:each="product : ${productList}"
+                    th:value="${product.id}"
+                    th:text="${product.name}">dip
+            </option>
+          </select>
+        </div>
 
         <button type="submit" class="btn btn-primary col-2"> Valider</button>
       </form>
 
       <hr>
 
-      <a th:href="@{/user/product-list}"> Retourner à la liste des produits</a>
+      <a th:href="@{/user/order-list}"> Retourner à la liste des produits</a>
     </div>
   </div>
 </div>

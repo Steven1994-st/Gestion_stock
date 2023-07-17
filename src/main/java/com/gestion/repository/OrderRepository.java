@@ -15,5 +15,5 @@ public interface OrderRepository extends CrudRepository<Order,Long> {
      * @return list of orders retrieved
      */
     @Query("SELECT r FROM Order r where r.customer=:p")
-    List<Order> findOrderByCustomer(@Param("p") String idCustomer);
+    List<Order> findOrderByCustomer(@Param("p") Long idCustomer);
 }

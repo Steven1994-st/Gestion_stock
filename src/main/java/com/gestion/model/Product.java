@@ -24,9 +24,13 @@ public class Product extends Persistent{
 	@JoinColumn(name = "user")
 	private User user;
 
-	@ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
-	@JsonIgnore
-	private List<Order> orders = new ArrayList<>();
+//	@ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
+//	@JsonIgnore
+//	private List<Order> orders = new ArrayList<>();
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy ="product")
+//	@JsonIgnore
+	private List<OrderProduct> orderProducts = new ArrayList<>();
 
 	public Product() {
 	}
@@ -38,6 +42,16 @@ public class Product extends Persistent{
 		this.price = price;
 		this.quantity = quantity;
 		this.user = user;
+	}
+
+	public Product(String reference, String name, String description, float price, long quantity, User user, List<OrderProduct> orderProducts) {
+		this.reference = reference;
+		this.name = name;
+		this.description = description;
+		this.price = price;
+		this.quantity = quantity;
+		this.user = user;
+		this.orderProducts = orderProducts;
 	}
 
 	public String getReference() {
@@ -88,11 +102,11 @@ public class Product extends Persistent{
 		this.user = user;
 	}
 
-	public List<Order> getOrders() {
-		return orders;
+	public List<OrderProduct> getOrderProducts() {
+		return orderProducts;
 	}
 
-	public void setOrders(List<Order> orders) {
-		this.orders = orders;
+	public void setOrderProducts(List<OrderProduct> orderProducts) {
+		this.orderProducts = orderProducts;
 	}
 }

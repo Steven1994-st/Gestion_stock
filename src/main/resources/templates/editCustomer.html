@@ -14,29 +14,29 @@
 <div class="container">
   <div class="row mt-5">
     <div class="col-6 mx-auto">
-      <h1>Modification utilisateur</h1>
+      <h1>Modification de client</h1>
       <hr>
 
-      <form action="#" th:action="@{/admin/update-user/{id}(id=${user.id})}"
-            th:object="${user}" method="POST">
+      <form action="#" th:action="@{/user/update-customer/{id}(id=${customer.id})}"
+            th:object="${customer}" method="POST">
         <input type="text" th:field="*{firstname}" id="firstname" placeholder="Prénom" class="form-control mb-4 col-8">
 
         <input type="text" th:field="*{name}" id="name" placeholder="Nom" class="form-control mb-4 col-8">
 
         <input type="text" th:field="*{email}" id="email" placeholder="Email" class="form-control mb-4 col-8">
 
-        <label>Role</label>
-        <select name="role" th:field="*{role}">
-          <option th:value="EMPLOYEE" th:text="Employee"> </option>
-          <option th:value="ADMIN" th:text="Admin"></option>
-        </select><br><br>
+        <input type="text" th:field="*{phone}" id="phone" placeholder="Téléphone" class="form-control mb-4 col-8">
+
+        <input type="text" th:field="*{address}" id="Adresse" placeholder="Nom" class="form-control mb-4 col-8">
+
+       <br><br>
 
         <button type="submit" class="btn btn-primary col-2"> Valider</button>
       </form>
 
       <hr>
 
-      <a th:href="@{/admin/user-list}"> Retourner à la liste d'utilisateur</a>
+      <a th:href="@{/admin/user-list}"> Retourner à la liste de client</a>
     </div>
   </div>
 </div>

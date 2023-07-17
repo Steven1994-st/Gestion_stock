@@ -30,6 +30,9 @@ public class UserController {
     private OrderService orderService;
 
     @Autowired
+    private OrderProductService orderProductService;
+
+    @Autowired
     private CustomerService customerService;
 
 
@@ -215,6 +218,124 @@ public class UserController {
             model.addAttribute("listCustomer", productService.getRepository().findAll());
         }
         return "customerList";
+    }
+
+
+    // RESOURCES FOR ORDER
+
+    @RequestMapping("/order-list")
+    public String viewOrderListPage(Model model) {
+
+        model.addAttribute("listOrder",
+                orderService.getRepository().findAll());
+        return "orderList";
+    }
+
+    @RequestMapping("/show-add-order-form")
+    public String viewAddOrderForm(Model model) {
+        Order order = new Order();
+
+        model.addAttribute("customerList", customerService.getRepository().findAll());
+        model.addAttribute("productList", productService.getRepository().findAll());
+        model.addAttribute("order", order);
+        return "addOrder";
+    }
+
+    @PostMapping("/add-order")
+    public String saveNewOrder(@Valid @ModelAttribute("order") Order order,
+                                 BindingResult result,
+                                 Model model) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("order", order);
+            return "addOrder";
+        }
+
+        orderService.getRepository().save(order);
+        return "redirect:/user/order-list";
+    }
+
+    @GetMapping("/show-update-order-form/{id}")
+    public String showFormForUpdateOrder(@PathVariable(value = "id") long id, Model model) {
+
+        // get order from the service
+        Order order = orderService.getRepository().findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid order Id:" + id));
+
+        // set order as a model attribute to pre-populate the form
+        model.addAttribute("productList", productService.getRepository().findAll());
+        model.addAttribute("order", order);
+        return "editOrder";
+    }
+
+    @PostMapping("/update-order/{id}")
+    public String updateOrder(@PathVariable("id") long id, @Valid @ModelAttribute("order") Order order,
+                                BindingResult result,
+                                Model model) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("order", order);
+            return "editOrder";
+        }
+
+        orderService.updateOrder(order);
+        return "redirect:/user/order-list";
+    }
+
+    @GetMapping("/delete-order-by-id/{id}")
+    public String deleteOrder(@PathVariable(value = "id") long id) {
+
+        orderService.getRepository().deleteById(id);
+        return "redirect:/user/order-list";
+    }
+
+    @RequestMapping("/order-search")
+    public String searchOrder(Model model, String keyword) {
+        if(keyword!=null) {
+            List<Order> orderList = orderService.search(keyword);
+            model.addAttribute("listOrder", orderList);
+        }else {
+            model.addAttribute("listOrder", orderService.getRepository().findAll());
+        }
+        return "orderList";
+    }
+
+    @RequestMapping("/view-product-order/{orderId}")
+    public String viewProductOrderPage(@PathVariable(value = "orderId") long orderId, Model model) {
+
+        Order order = orderService.getRepository().findById(orderId).get();
+        model.addAttribute("order", order);
+        model.addAttribute("listOrderProduct", order.getOrderProducts());
+        model.addAttribute("productList", productService.getRepository().findAll());
+        OrderProduct orderProduct = new OrderProduct();
+        orderProduct.setOrder(order);
+        model.addAttribute("orderProduct", orderProduct);
+
+        return "viewProductsOrder";
+    }
+
+    @RequestMapping("/add-order-product")
+    public String viewAddProductOrderPage(@Valid @ModelAttribute("orderProduct") OrderProduct orderProduct,
+                                          BindingResult result, Model model) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("orderProduct", orderProduct);
+            return "viewProductsOrder";
+        }
+        orderProductService.getRepository().save(orderProduct);
+
+        return "redirect:/user/view-product-order/"+orderProduct.getOrder().getId();
+    }
+
+    @GetMapping("/delete-product-order-by-key/{orderId}/{productId}")
+    public String deleteProductOrder(@PathVariable(value = "orderId") Long orderId, @PathVariable(value = "productId") Long productId) {
+
+        OrderProduct orderProduct = orderProductService.getRepository()
+                .findOrderProductByOrderAndProduct(orderId, productId);
+
+        orderProductService.getRepository().deleteById(orderProduct.getOrderProductKey());
+
+        return "redirect:/user/view-product-order/"+orderProduct.getOrder().getId();
     }
 
 

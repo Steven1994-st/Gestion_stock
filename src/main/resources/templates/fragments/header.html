@@ -1,6 +1,6 @@
 <header th:fragment="header">
   <nav class="navbar navbar-expand-md bg-dark navbar-dark">
-    <a class="navbar-brand" th:href="@{/user/product-list}">
+    <a class="navbar-brand" th:href="@{/user/product-list}" sec:authorize="hasAnyAuthority('ADMIN', 'EMPLOYEE')">
       Gestion de produit
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#topNavbar">
@@ -17,21 +17,28 @@
 
           <li class="nav-item">
               <a class="nav-link" th:href="@{/admin/holiday-list}" sec:authorize="hasAnyAuthority('ADMIN')">
-                  Gestion des congés
+                  Gestion de congés
               </a>
           </li>
 
           <li class="nav-item">
               <a class="nav-link" th:href="@{/user/holiday-list}" sec:authorize="hasAnyAuthority('EMPLOYEE')">
-                  Gestion des congés
+                  Gestion de congés
               </a>
           </li>
 
           <li class="nav-item">
-              <a class="nav-link" th:href="@{/admin/user-list}" sec:authorize="hasAnyAuthority('ADMIN')">
-                  Gestion des clients
+              <a class="nav-link" th:href="@{/user/customer-list}" sec:authorize="hasAnyAuthority('ADMIN', 'EMPLOYEE')">
+                  Gestion de clients
               </a>
           </li>
+
+          <li class="nav-item">
+              <a class="nav-link" th:href="@{/user/order-list}" sec:authorize="hasAnyAuthority('ADMIN', 'EMPLOYEE')">
+                  Gestion de commandes
+              </a>
+          </li>
+
         <li class="nav-item">
           <a class="nav-link" th:href="@{/user/profile}">Profil</a>
         </li>

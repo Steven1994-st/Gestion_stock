@@ -1,5 +1,6 @@
 package com.gestion.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -23,14 +24,18 @@ public class Order extends Persistent{
     @JoinColumn(name = "customer")
     private Customer customer;
 
-    @ManyToMany()
-    @JoinTable(name = "Product_Order", joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id"))
-    private List<Product> products = new ArrayList<>();
+//    @ManyToMany()
+//    @JoinTable(name = "Product_Order", joinColumns = @JoinColumn(name = "order_id"),
+//            inverseJoinColumns = @JoinColumn(name = "product_id"))
+//    private List<Product> products = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "payment_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "payment_id", referencedColumnName = "id")
     private Payment payment;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy ="order")
+    @JsonIgnore
+    private List<OrderProduct> orderProducts = new ArrayList<>();
 
     public Order() {
     }
@@ -41,8 +46,17 @@ public class Order extends Persistent{
         this.QR_code = QR_code;
         this.status = status;
         this.customer = customer;
-        this.products = products;
         this.payment = payment;
+    }
+
+    public Order(String description, boolean reservation, String QR_code, ORDER_STATUS status, Customer customer, Payment payment, List<OrderProduct> orderProducts) {
+        this.description = description;
+        this.reservation = reservation;
+        this.QR_code = QR_code;
+        this.status = status;
+        this.customer = customer;
+        this.payment = payment;
+        this.orderProducts = orderProducts;
     }
 
     public boolean isReservation() {
@@ -77,12 +91,12 @@ public class Order extends Persistent{
         this.customer = customer;
     }
 
-    public List<Product> getProducts() {
-        return products;
+    public List<OrderProduct> getOrderProducts() {
+        return orderProducts;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
+    public void setOrderProducts(List<OrderProduct> orderProducts) {
+        this.orderProducts = orderProducts;
     }
 
     public Payment getPayment() {

@@ -45,11 +45,12 @@
     <tbody>
     <tr th:each="order : ${listOrder}">
       <td th:text="${order.description}"></td>
-      <td th:text="${order.customer.firstname} ${order.customer.name}"></td>
+      <td th:text="${order.customer.firstname} + ' ' + ${order.customer.name}"></td>
       <td th:text="${order.status}"></td>
       <td th:text="${order.reservation}"></td>
-      <td> <a th:href="@{/user/show-update-order-form/{id}(id=${order.id})}" clas s="btn btn-primary">Modifier</a>
+      <td> <a th:href="@{/user/show-update-order-form/{id}(id=${order.id})}" class="btn btn-primary">Modifier</a>
         <a th:href="@{/user/delete-order-by-id/{id}(id=${order.id})}" class="btn btn-danger">Supprimer</a>
+        <a th:href="@{/user/view-product-order/{id}(id=${order.id})}" class="btn btn-success">Produits</a>
       </td>
     </tr>
     </tbody>
