@@ -8,7 +8,7 @@
         integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  <title>Gestion du personnel</title>
+  <title>Gestion du profil</title>
 </head>
 <body>
 
@@ -20,73 +20,53 @@
       <form
               method="post"
               role="form"
-              th:action="@{/admin/registration}"
+              th:action="@{/user/update-profile/{id}(id=${user.id})}"
               th:object="${user}"
       >
-        <h1 style="margin-bottom: 10px">Enregistrement d'utilisateur</h1>
+        <h1 style="margin-bottom: 10px">Mettre à jour le profil</h1>
         <hr>
         <div th:if="${param.success}">
           <div class="alert alert-info">
-            Enregistrement reussi !!!
+            Mise à jour reussie !!!
           </div>
         </div>
         <div class="mb-3">
-          <label class="form-label" for="name">Prénom</label>
-          <input class="form-control" id="firstname" name="firstname" type="text">
+          <label class="form-label" for="firstname">Prénom</label>
+          <input th:field="*{firstname}" class="form-control" id="firstname" name="firstname" type="text">
           <p class="text-danger" th:errors="*{firstname}"
              th:if="${#fields.hasErrors('firstname')}"></p>
         </div>
         <div class="mb-3">
           <label class="form-label" for="name">Nom</label>
-          <input class="form-control" id="name" name="name" type="text">
+          <input th:field="*{name}" class="form-control" id="name" name="name" type="text">
           <p class="text-danger" th:errors="*{name}"
              th:if="${#fields.hasErrors('name')}"></p>
         </div>
         <div class="mb-3">
-          <label class="form-label" for="email">Email</label>
-          <input class="form-control" id="email" name="email" type="email">
-          <p class="text-danger" th:errors="*{email}"
-             th:if="${#fields.hasErrors('email')}"></p>
-        </div>
-        <div class="mb-3">
-          <label class="form-label" for="password">Password</label>
-          <input class="form-control" id="password" name="password" type="password">
-          <p class="text-danger" th:errors="*{password}"
-             th:if="${#fields.hasErrors('password')}"></p>
-        </div>
-        <div class="mb-3">
           <label class="form-label" for="phone">Téléphone</label>
-          <input class="form-control" id="phone" name="phone" type="phone">
+          <input th:field="*{phone}" class="form-control" id="phone" name="phone" type="tel">
           <p class="text-danger" th:errors="*{phone}"
              th:if="${#fields.hasErrors('phone')}"></p>
         </div>
         <div class="mb-3">
           <label class="form-label" for="address">Adresse</label>
-          <input class="form-control" id="address" name="address" type="address">
+          <input th:field="*{address}" class="form-control" id="address" name="address" type="text">
           <p class="text-danger" th:errors="*{address}"
              th:if="${#fields.hasErrors('address')}"></p>
         </div>
-        <div class="mb-3">
-            <label>Role</label>
-            <select name="role" th:field="*{role}">
-              <option th:value="EMPLOYEE" th:text="Employee"> </option>
-              <option th:value="ADMIN" th:text="Admin"></option>
-            </select>
-        </div>
+
+        <input type="hidden" th:field="*{email}" class="form-control mb-4 col-8">
+        <input type="hidden" th:field="*{password}" class="form-control mb-4 col-8">
+        <input type="hidden" th:field="*{token}" class="form-control mb-4 col-8">
+        <input type="hidden" th:field="*{active}" class="form-control mb-4 col-8">
 
         <div class="mb-3">
           <button class="btn btn-primary mb-3" type="submit">Valider</button>
-<!--          or <a class="link-primary" th:href="@{/login}">Login</a>-->
         </div>
       </form>
     </div>
   </div>
 </div>
-
-
-<script crossorigin="anonymous"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

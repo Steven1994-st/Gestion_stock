@@ -2,10 +2,14 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-  <meta charset="utf-8">
-  <title>Gestion des commandes</title>
-
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <title>Gestion des commandes</title>
 
 </head>
 
@@ -13,21 +17,30 @@
 <div th:replace="~{fragments/header :: header}"></div>
 
 <div class="container my-2">
-  <h1 style="margin-bottom: 10px">Liste des produits de la commande</h1>
-  <hr>
+  <h1>Liste des produits de la commande</h1>
+  <hr style="background: black; margin-bottom: 40px">
 
-  <div class="row" th:object="${order}">
-    <h3>Description:</h3>
-    <span th:text="${order.description}"></span>
+  <div th:object="${order}" class="row" style="display: flex; margin-bottom: 40px" >
+    <div class="col-xs-12 col-sm-4 col-md-2">
+      <h5>Description:</h5>
+      <span th:text="${order.description}"></span>
+    </div>
 
-    <h3>Client:</h3>
-    <span th:text="${order.customer.firstname} + ' ' + ${order.customer.name}"></span>
+    <div class="col-xs-12 col-sm-4 col-md-2">
+      <h5>Client:</h5>
+      <span th:text="${order.customer.firstname} + ' ' + ${order.customer.name}"></span>
+    </div>
 
-    <h3>Statut:</h3>
-    <span th:text="${order.status}"></span>
+    <div class="col-xs-12 col-sm-4 col-md-2">
+      <h5>Statut:</h5>
+      <span th:text="${order.status}"></span>
+    </div>
 
-    <h3>Reservation?</h3>
-    <span th:text="${order.reservation}"></span>
+    <div class="col-xs-12 col-sm-4 col-md-2">
+      <h5>Reservation?:</h5>
+      <span th:text="${order.reservation}"></span>
+    </div>
+
   </div>
 
   <br><br>
@@ -52,6 +65,8 @@
                   th:text="${product.name}">
           </option>
         </select>
+        <p class="text-danger" th:errors="*{product}"
+           th:if="${#fields.hasErrors('product')}"></p>
       </div>
       <div class="mb-3">
         <label class="form-label" for="quantity">Quantité</label>

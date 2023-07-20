@@ -18,9 +18,13 @@ public class User extends Persistent{
     private String email;
     @Column(name = "phone")
     private String phone;
-
+    @Column(name = "address")
+    private String address;
     @Column(name = "password", nullable = false)
     private String password;
+
+    @Column(name = "passwordConfirm", nullable = false)
+    private String passwordConfirm;
 
     @Column(name = "token")
     private String token;
@@ -46,16 +50,19 @@ public class User extends Persistent{
     public User() {
     }
 
-
-    public User(String name, String firstname, String email, String phone, String login, String password, String token, boolean active, ROLE role) {
+    public User(String name, String firstname, String email, String phone, String password, String address, String token, boolean active, ROLE role, List<Notification> notifications, List<Holiday> holidays, List<Product> products) {
         this.name = name;
         this.firstname = firstname;
         this.email = email;
         this.phone = phone;
         this.password = password;
+        this.address = address;
         this.token = token;
         this.active = active;
         this.role = role;
+        this.notifications = notifications;
+        this.holidays = holidays;
+        this.products = products;
     }
 
     public String getName() {
@@ -90,13 +97,20 @@ public class User extends Persistent{
         this.phone = phone;
     }
 
-
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPasswordConfirm() {
+        return passwordConfirm;
+    }
+
+    public void setPasswordConfirm(String passwordConfirm) {
+        this.passwordConfirm = passwordConfirm;
     }
 
     public String getToken() {
@@ -121,6 +135,14 @@ public class User extends Persistent{
 
     public void setRole(ROLE role) {
         this.role = role;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public List<Notification> getNotifications() {

@@ -71,8 +71,7 @@ public class UserController {
 
     @PostMapping("/add-product")
     public String saveNewProduct(@Valid @ModelAttribute("product") Product product,
-                               BindingResult result,
-                               Model model) {
+                               BindingResult result, Model model) {
         Product productFound = productService.getRepository()
                 .findProductByReference(product.getReference());
 
@@ -102,8 +101,7 @@ public class UserController {
 
     @PostMapping("/update-product/{id}")
     public String updateProduct(@PathVariable("id") long id, @Valid @ModelAttribute("product") Product product,
-                             BindingResult result,
-                             Model model) {
+                             BindingResult result, Model model) {
         Product existingProduct = productService.getRepository().findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid User Id:" + id));
 
@@ -158,8 +156,7 @@ public class UserController {
 
     @PostMapping("/add-customer")
     public String saveNewCustomer(@Valid @ModelAttribute("customer") Customer customer,
-                                 BindingResult result,
-                                 Model model) {
+                                 BindingResult result, Model model) {
         Customer customerFound = customerService.getRepository()
                 .findByEmail(customer.getEmail());
 
@@ -189,8 +186,7 @@ public class UserController {
 
     @PostMapping("/update-customer/{id}")
     public String updateCustomer(@PathVariable("id") long id, @Valid @ModelAttribute("customer") Customer customer,
-                                BindingResult result,
-                                Model model) {
+                                BindingResult result, Model model) {
 
         if (result.hasErrors()) {
             model.addAttribute("customer", customer);
@@ -243,8 +239,7 @@ public class UserController {
 
     @PostMapping("/add-order")
     public String saveNewOrder(@Valid @ModelAttribute("order") Order order,
-                                 BindingResult result,
-                                 Model model) {
+                                 BindingResult result, Model model) {
 
         if (result.hasErrors()) {
             model.addAttribute("order", order);
@@ -318,8 +313,22 @@ public class UserController {
     public String viewAddProductOrderPage(@Valid @ModelAttribute("orderProduct") OrderProduct orderProduct,
                                           BindingResult result, Model model) {
 
+        OrderProduct orderProductFound = orderProductService.getRepository()
+                .findOrderProductByOrderAndProduct(orderProduct.getOrder().getId(), orderProduct.getProduct().getId());
+
+        if (orderProductFound != null)
+            result.rejectValue("quantity", null,
+                    "La quantité est requise !!!");
+
+        if (orderProduct.getQuantity() == 0)
+            result.rejectValue("product", null,
+                    "Ce produit existe déjà dans cette commande !!!");
+
         if (result.hasErrors()) {
             model.addAttribute("orderProduct", orderProduct);
+            model.addAttribute("order", orderProduct.getOrder());
+            model.addAttribute("listOrderProduct", orderProduct.getOrder().getOrderProducts());
+            model.addAttribute("productList", productService.getRepository().findAll());
             return "viewProductsOrder";
         }
         orderProductService.getRepository().save(orderProduct);
@@ -347,10 +356,10 @@ public class UserController {
         //Récupérer l'utilisateur connecté
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        User curentUser = userService.getRepository().findByEmail(username);
+        User currentUser = userService.getRepository().findByEmail(username);
 
         model.addAttribute("listHoliday",
-                holidayService.getRepository().findHolidaysByUser(curentUser.getId()));
+                holidayService.getRepository().findHolidaysByUser(currentUser.getId()));
         return "userHolidayList";
     }
 
@@ -361,8 +370,8 @@ public class UserController {
         //Récupérer l'utilisateur connecté
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        User curentUser = userService.getRepository().findByEmail(username);
-        holiday.setUser(curentUser);
+        User currentUser = userService.getRepository().findByEmail(username);
+        holiday.setUser(currentUser);
 
         model.addAttribute("holiday", holiday);
         return "userAddHoliday";
@@ -370,8 +379,7 @@ public class UserController {
 
     @PostMapping("/add-holiday")
     public String saveNewHoliday(@Valid @ModelAttribute("holiday") Holiday holiday,
-                                 BindingResult result,
-                                 Model model) {
+                                 BindingResult result, Model model) {
 
         if (result.hasErrors()) {
             model.addAttribute("holiday", holiday);
@@ -396,8 +404,7 @@ public class UserController {
 
     @PostMapping("/update-holiday/{id}")
     public String updateHoliday(@PathVariable("id") long id, @Valid @ModelAttribute("holiday") Holiday holiday,
-                                BindingResult result,
-                                Model model) {
+                                BindingResult result, Model model) {
 
         if (result.hasErrors()) {
             model.addAttribute("holiday", holiday);
@@ -426,6 +433,50 @@ public class UserController {
             model.addAttribute("listHoliday", holidayService.getRepository().findAll());
         }
         return "userHolidayList";
+    }
+
+
+    // RESOURCES FOR PROFILE
+
+    @RequestMapping("/view-profile")
+    public String viewProfilePage(Model model) {
+
+        //Récupérer l'utilisateur connecté
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User currentUser = userService.getRepository().findByEmail(username);
+
+        model.addAttribute("user", currentUser);
+
+        return "viewProfile";
+    }
+
+    @RequestMapping("/show-update-profile-form")
+    public String viewUpdateProfileFormPage(Model model) {
+
+        //Récupérer l'utilisateur connecté
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User currentUser = userService.getRepository().findByEmail(username);
+
+        // set user as a model attribute to pre-populate the form
+        model.addAttribute("user", currentUser);
+        return "updateProfile";
+    }
+
+    @PostMapping("/update-profile/{id}")
+    public String updateProfile(@PathVariable("id") long id, @Valid @ModelAttribute("user") User user,
+                                BindingResult result, Model model) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("user", user);
+            return "updateProfile";
+        }
+
+        user.setId(id);
+        userService.updateUser(user);
+
+        return "redirect:/user/view-profile";
     }
 
 

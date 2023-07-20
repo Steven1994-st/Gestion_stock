@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <title>Mon profil</title>
+
+</head>
+
+<body>
+  <div th:replace="~{fragments/header :: header}"></div>
+
+  <div class="container my-2" th:object="${user}">
+    <h1>Mon profil</h1>
+    <hr style="background: black; margin-bottom: 40px">
+
+    <div class="row" style="display: flex; margin-bottom: 40px">
+      <div class="col-xs-12 col-sm-4 col-md-2">
+        <h5>Prénom:</h5>
+        <span th:text="${user.firstname}"></span>
+      </div>
+
+      <div class="col-xs-12 col-sm-4 col-md-2">
+        <h5>Nom:</h5>
+        <span th:text="${user.name}"></span>
+      </div>
+
+      <div class="col-xs-12 col-sm-4 col-md-2">
+        <h5>Email:</h5>
+        <span th:text="${user.email}"></span>
+      </div>
+
+    </div>
+
+    <div class="row" style="display: flex; margin-bottom: 40px">
+      <div class="col-xs-12 col-sm-4 col-md-2">
+        <h5>Téléphone:</h5>
+        <span th:text="${user.phone}"></span>
+      </div>
+
+      <div class="col-xs-12 col-sm-4 col-md-2">
+        <h5>Adresse:</h5>
+        <span th:text="${user.address}"></span>
+      </div>
+
+      <div class="col-xs-12 col-sm-4 col-md-2">
+        <h5>Role:</h5>
+        <span th:text="${user.role}"></span>
+      </div>
+
+    </div>
+    <br><br>
+
+    <div class="row">
+      <a th:href="@{/user/show-update-profile-form}" style="margin-right: 20px"> Mettre à jour le profil</a>
+      <a th:href="@{/update-password-step1}"> Réinitialiser le mot de passe</a>
+    </div>
+  </div>
+</body>
+
+</html>

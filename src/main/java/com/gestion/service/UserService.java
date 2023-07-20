@@ -106,6 +106,7 @@ public class UserService {
         userFound.setName(user.getName());
 //        userFound.setLogin(user.getLogin());
         userFound.setPhone(user.getPhone());
+        userFound.setAddress(user.getAddress());
 
         userFound.setModificationDate(new Date());
 
