@@ -43,15 +43,15 @@
           </select>
         </div>
 
-        <div class="form-group">
-          <label for="products">Selectionner les produits</label>
-          <select class="form-control selectpicker" th:field="*{products}" id="products" multiple>
-            <option th:each="product : ${productList}"
-                    th:value="${product.id}"
-                    th:text="${product.name}">dip
-            </option>
-          </select>
-        </div>
+<!--        <div class="form-group">-->
+<!--          <label for="products">Selectionner les produits</label>-->
+<!--          <select class="form-control selectpicker" th:field="*{products}" id="products" multiple>-->
+<!--            <option th:each="product : ${productList}"-->
+<!--                    th:value="${product.id}"-->
+<!--                    th:text="${product.name}">dip-->
+<!--            </option>-->
+<!--          </select>-->
+<!--        </div>-->
 
         <button type="submit" class="btn btn-primary col-2"> Valider</button>
       </form>

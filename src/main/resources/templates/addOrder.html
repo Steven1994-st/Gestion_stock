@@ -61,15 +61,15 @@
               </select>
             </div>
 
-            <div class="mb-3">
-              <label for="products">Selectionner les produits</label>
-              <select class="form-control selectpicker" th:field="*{products}" id="products" multiple="multiple">
-                <option th:each="product : ${productList}"
-                        th:value="${product.id}"
-                        th:text="${product.name}">dip
-                </option>
-              </select>
-            </div>
+<!--            <div class="mb-3">-->
+<!--              <label for="products">Selectionner les produits</label>-->
+<!--              <select class="form-control selectpicker" th:field="*{orderProduct.product}" id="products" multiple="multiple">-->
+<!--                <option th:each="product : ${productList}"-->
+<!--                        th:value="${product.id}"-->
+<!--                        th:text="${product.name}">dip-->
+<!--                </option>-->
+<!--              </select>-->
+<!--            </div>-->
 
             <div class="mb-3">
               <button class="btn btn-primary mb-3" type="submit">Valider</button>

@@ -56,6 +56,7 @@ public class UserController {
     }
 
 
+    // RESOURCES FOR PRODUCTS
     @RequestMapping("/product-list")
     public String viewProductListPage(Model model) {
         model.addAttribute("listProduct", productService.getRepository().findAll());

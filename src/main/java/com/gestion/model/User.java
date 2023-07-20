@@ -22,8 +22,7 @@ public class User extends Persistent{
     private String address;
     @Column(name = "password", nullable = false)
     private String password;
-
-    @Column(name = "passwordConfirm", nullable = false)
+    @Column(name = "passwordConfirm")
     private String passwordConfirm;
 
     @Column(name = "token")
