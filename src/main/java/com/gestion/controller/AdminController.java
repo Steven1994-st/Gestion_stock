@@ -52,31 +52,31 @@ public class AdminController {
         return "addUser";
     }
 
-    @PostMapping("/registration/{role}")
-    public String registration(@PathVariable String role,
-            @Valid @ModelAttribute("user") User user,
-            BindingResult result,
-            Model model) {
-        User existingUser = userService.getRepository().findByEmail(user.getEmail());
-
-        if (existingUser != null)
-            result.rejectValue("email", null,
-                    "User already registered !!!");
-
-        if (result.hasErrors()) {
-            model.addAttribute("user", user);
-            return "addUser";
-        }
-
-        if(role.equals("ADMIN"))
-            user.setRole(User.ROLE.ADMIN);
-        else
-            user.setRole(User.ROLE.EMPLOYEE);
-
-        userService.saveNewUser(user);
-        return "redirect:/admin/userList";
-//        return "redirect:/registration?success";
-    }
+//    @PostMapping("/registration/{role}")
+//    public String registration(@PathVariable String role,
+//            @Valid @ModelAttribute("user") User user,
+//            BindingResult result,
+//            Model model) {
+//        User existingUser = userService.getRepository().findByEmail(user.getEmail());
+//
+//        if (existingUser != null)
+//            result.rejectValue("email", null,
+//                    "User already registered !!!");
+//
+//        if (result.hasErrors()) {
+//            model.addAttribute("user", user);
+//            return "addUser";
+//        }
+//
+//        if(role.equals("ADMIN"))
+//            user.setRole(User.ROLE.ADMIN);
+//        else
+//            user.setRole(User.ROLE.EMPLOYEE);
+//
+//        userService.saveNewUser(user);
+//        return "redirect:/admin/userList";
+////        return "redirect:/registration?success";
+//    }
 
     @PostMapping("/registration")
     public String registration(@Valid @ModelAttribute("user") User user,
@@ -86,7 +86,7 @@ public class AdminController {
 
         if (existingUser != null)
             result.rejectValue("email", null,
-                    "Un utilisateur avec cette Email existe déjà !!!");
+                    "Un utilisateur avec cet email existe déjà !!!");
 
         if (result.hasErrors()) {
             model.addAttribute("user", user);
@@ -99,7 +99,8 @@ public class AdminController {
     }
 
     @GetMapping("/show-update-user-form/{id}")
-    public String showFormForUpdateUser(@PathVariable(value = "id") long id, Model model) {
+    public String showFormForUpdateUser(@PathVariable(value = "id") long id,
+                                        Model model) {
 
         // get user from the service
         User user = userService.getRepository().findById(id)
@@ -111,7 +112,8 @@ public class AdminController {
     }
 
     @PostMapping("/update-user/{id}")
-    public String updateUser( @PathVariable("id") long id, @Valid User user,
+    public String updateUser( @PathVariable("id") long id,
+                              @Valid @ModelAttribute ("user") User user,
                                BindingResult result,
                                Model model) {
         User existingUser = userService.getRepository().findById(id)

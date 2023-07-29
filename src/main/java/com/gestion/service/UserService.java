@@ -104,7 +104,7 @@ public class UserService {
 
         userFound.setFirstname(user.getFirstname());
         userFound.setName(user.getName());
-//        userFound.setLogin(user.getLogin());
+        userFound.setRole(user.getRole());
         userFound.setPhone(user.getPhone());
         userFound.setAddress(user.getAddress());
 

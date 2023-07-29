@@ -73,7 +73,7 @@ public class AccountService {
 
         String mailSubject = "Réinitialisation du mot de passe";
         String message = "Bonjour,\n\n Veuillez utiliser ce code pour réinitialiser votre mot de passe : "
-                + user2.getToken()+ "\n\nMerci, \nTFE Gestion de stockL";
+                + user2.getToken()+ "\n\nMerci, \nTFE Gestion de stock";
         sendMail(user2.getEmail(), mailSubject, message);
 
         return user2;
@@ -134,7 +134,7 @@ public class AccountService {
      * @return
      */
     public boolean codeValidation(User user){
-        User user2 = getRepository().findByEmail(user.getEmail());
+        User user2 = getRepository().findById(user.getId()).get();
 
         if(!user.getToken().equals(user2.getToken())){
             return false;
@@ -160,7 +160,7 @@ public class AccountService {
      */
     private User updateTokenOrStatusOrPwd(User user){
         User userFound = getRepository()
-                .findByEmail(user.getEmail());
+                .findById(user.getId()).get();
 
         if (user.getToken() != null){
             userFound.setToken(user.getToken());

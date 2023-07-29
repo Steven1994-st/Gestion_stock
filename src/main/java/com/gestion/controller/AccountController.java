@@ -67,22 +67,25 @@ public class AccountController {
     public String updatePasswordStep1(@Valid @ModelAttribute("user") User user,
                                       BindingResult result, Model model) {
 
-        User userFound;
+        User userFound = null;
 
         //Récupérer l'utilisateur connecté
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User currentUser = userService.getRepository().findByEmail(username);
 
-        if (currentUser == null){
+        if (user.getEmail().isEmpty()){
+            result.rejectValue("email", null,
+                    "L'email est requis !!!");
+        }else if (currentUser == null){
             userFound = userService.getRepository().findByEmail(user.getEmail());
 
             if (userFound == null){
                 result.rejectValue("email", null,
-                        "l'email est introuvable !!!");
+                        "L'email est introuvable !!!");
             }
         }else {
-            userFound = userService.getRepository().findById(user.getId()).get();
+            userFound = currentUser;
 
             if(!userFound.getEmail().equals(user.getEmail())){
                 result.rejectValue("email", null,
@@ -97,7 +100,7 @@ public class AccountController {
 
         accountService.sendPasswordResetCode(userFound);
 
-        return "redirect:/show-update-password-step2-form"+userFound.getId();
+        return "redirect:/show-update-password-step2-form/"+userFound.getId();
     }
 
     @GetMapping("/show-update-password-step2-form/{idUser}")
@@ -107,7 +110,9 @@ public class AccountController {
         User user = userService.getRepository().findById(idUser)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid User Id:" + idUser));
 
-        // set holiday as a model attribute to pre-populate the form
+        // set use as a model attribute to pre-populate the form
+        user.setPassword(null);
+        user.setToken(null);
         model.addAttribute("user", user);
         return "updatePasswordStep2";
     }
@@ -116,6 +121,8 @@ public class AccountController {
     public String updatePasswordStep2(@PathVariable("idUser") long idUser, @Valid @ModelAttribute("user") User user,
                                       BindingResult result, Model model) {
 
+
+        user.setId(idUser);
 
         if (user.getPassword() == null){
             result.rejectValue("password", null,
@@ -130,6 +137,8 @@ public class AccountController {
         }
 
         if (result.hasErrors()) {
+            user.setPassword(null);
+            user.setPasswordConfirm(null);
             model.addAttribute("user", user);
             return "updatePasswordStep2";
         }
