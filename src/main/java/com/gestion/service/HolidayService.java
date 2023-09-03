@@ -39,7 +39,7 @@ public class HolidayService {
 
         holiday.setStatus(Holiday.HOLIDAY_STATUS.PROCESSING);
         holiday.setCreationDate(new Date());
-        String message = "Un congé a été ajouté pour l'utilisateur:" + " "
+        String message = "Le congé \"" +holiday.getComment()+ "\" a été ajouté pour l'utilisateur:" + " "
                 + holiday.getUser().getFirstname() + " " + holiday.getUser().getName();
 
         notificationService.sendNotificationToAdmins(message);
@@ -66,13 +66,35 @@ public class HolidayService {
 
         holidayFound.setModificationDate(new Date());
 
-        String message = "Un congé a été modifié pour l'utilisateur:" + " "
-                + holiday.getUser().getFirstname() + " " + holiday.getUser().getName();
+        String message = "Le congé \""+holiday.getComment()+ "\" a été modifié pour l'utilisateur: " +
+                holiday.getUser().getFirstname() + " " + holiday.getUser().getName();
 
         notificationService.sendNotificationToAdmins(message);
 
         return getRepository().save(holidayFound);
     }
+
+    /**
+     * Notifier l'employé de la modification du congé
+     * @param holiday
+     * @return
+     */
+    public void sendNotificationToEmployee(Holiday holiday){
+        String status;
+        if (holiday.getStatus().equals(Holiday.HOLIDAY_STATUS.PROCESSING)){
+            status = "est en traitement";
+        } else if (holiday.getStatus().equals(Holiday.HOLIDAY_STATUS.ACCEPT)) {
+            status = "a été accepté";
+        } else {
+            status = "a été refusé";
+        }
+
+        String message = "Le congé \"" +holiday.getComment()+
+                "\" " +status+ " par un administrateur";
+
+        notificationService.sendNotification(message, holiday.getUser());
+    }
+
 
 
     @PersistenceContext

@@ -183,6 +183,8 @@ public class AdminController {
             return "adminAddHoliday";
         }
         holidayService.saveHoliday(holiday);
+        holidayService.sendNotificationToEmployee(holiday);
+
         return "redirect:/admin/holiday-list";
     }
 
@@ -210,6 +212,8 @@ public class AdminController {
 
         holiday.setId(id);
         holidayService.updateHoliday(holiday);
+        holidayService.sendNotificationToEmployee(holiday);
+
         return "redirect:/admin/holiday-list";
     }
 
@@ -217,7 +221,7 @@ public class AdminController {
     public String deleteHoliday(@PathVariable(value = "id") long id) {
 
         holidayService.getRepository().deleteById(id);
-        return "redirect:/user/holiday-list";
+        return "redirect:/admin/holiday-list";
     }
 
     @RequestMapping("/holiday-search")
