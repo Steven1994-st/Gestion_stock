@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -57,10 +58,17 @@ public class UserController {
 
 
     // RESOURCES FOR PRODUCTS
-    @RequestMapping("/product-list")
-    public String viewProductListPage(Model model) {
-        model.addAttribute("listProduct", productService.getRepository().findAll());
-        return "productList";
+   @RequestMapping("/product-list")
+    public String viewProductListPage(Model model,
+                                      @RequestParam (name="page",defaultValue = "1") int page,
+                                      @RequestParam (name="size", defaultValue = "3") int size) {
+
+
+           Page<Product> prods = productService.getEMpByPaginate(page, size);
+           model.addAttribute("products", prods);
+           model.addAttribute("pages", new int[prods.getTotalPages()]);
+           model.addAttribute("currentPage", page);
+       return "productList";
     }
 
     @RequestMapping("/show-add-product-form")
@@ -128,10 +136,18 @@ public class UserController {
     }
 
     @RequestMapping("/product-search")
-    public String searchProduct(Model model, String keyword) {
+    public String searchProduct(Model model, String keyword,
+                                @RequestParam (name="page",defaultValue = "1") int page,
+                                @RequestParam (name="size", defaultValue = "3") int size) {
+
+
         if(keyword!=null) {
+
             List<Product> productList = productService.search(keyword);
-            model.addAttribute("listProduct", productList);
+            model.addAttribute("listproduct", productList);
+            model.addAttribute("currentPage", page);
+
+
         }else {
             model.addAttribute("listProduct", productService.getRepository().findAll());
         }

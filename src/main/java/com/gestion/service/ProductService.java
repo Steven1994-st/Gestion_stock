@@ -11,6 +11,9 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -74,5 +77,9 @@ public class ProductService
 
         TypedQuery<Product> query = entityManager.createQuery(criteriaQuery);
         return query.getResultList();
+    }
+
+    public Page<Product> getEMpByPaginate(int page, int size) {
+        return productRepository.findAll(PageRequest.of(page, size));
     }
 }

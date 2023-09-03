@@ -1,3 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+
+<link rel="stylesheet" type="text/css"
+      href="webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
+<script src="webjars/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript"
+        src="webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <header th:fragment="header">
   <nav class="navbar navbar-expand-md bg-dark navbar-dark">
     <a class="navbar-brand" th:href="@{/user/product-list}" sec:authorize="hasAnyAuthority('ADMIN', 'EMPLOYEE')">
@@ -45,8 +53,8 @@
       </ul>
     </div>
 
-    <div style="margin-left: 150px">
-<!--      <ul class="nav navbar-nav">-->
+   <!--  <a style="margin-left: 150px">
+ <!-     <ul class="nav navbar-nav">-->
 <!--        <li th:classappend="${module == 'home' ? 'active' : ''}">-->
 <!--          <a href="#" th:href="@{/}">Home</a>-->
 <!--        </li>-->
@@ -54,22 +62,23 @@
 <!--          <a href="#" th:href="@{/task}">Tasks</a>-->
 <!--        </li>-->
 <!--      </ul>-->
-      <ul class="nav navbar-nav navbar-right">
 
 <!--        <li th:if="${#authorization.expression('!isAuthenticated()')}">-->
 <!--          <a href="/signin" th:href="@{/signin}">-->
 <!--            <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>&nbsp;Sign in-->
 <!--          </a>-->
-<!--        </li>-->
-        <li>
-<!--        <li th:if="${#authorization.expression('isAuthenticated()')}" style="margin-left: 150px">-->
-          <a href="/logout" th:href="@{/logout}" onclick="$('#form').submit();">
-            <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>&nbsp;Déconnexion
-          </a>
-<!--          <form style="visibility: hidden" id="form" method="post" action="#" th:action="@{/logout}"></form>-->
-        </li>
-      </ul>
-    </div>
+         <ul class="nav navbar-nav navbar-right">
+             <a class="text-center p-3" style="background-color: rgba(0, 0, 0, 0);">
+                 <span sec:authentication="name" > </span>
+             </a>
 
+
+                     <a style="background-color: #dd4b39;"href="/logout" th:href="@{/logout}" onclick="$('#form').submit();">
+                         <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Déconnexion
+                     </a>
+             </div>
+         </ul>
+     </div>
   </nav>
 </header>
+</html>

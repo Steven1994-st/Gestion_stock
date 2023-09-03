@@ -1,11 +1,15 @@
 package com.gestion.repository;
 
 import com.gestion.model.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-public interface ProductRepository extends CrudRepository<Product,Long> {
+public interface ProductRepository extends JpaRepository<Product,Long> {
 
     /**
      * Search Product by name or reference
@@ -15,6 +19,11 @@ public interface ProductRepository extends CrudRepository<Product,Long> {
     @Query("SELECT r FROM Product r where r.name=:p OR r.reference =:p")
     Product findProductByNameOrReference(@Param("p") String keyword);
 
+    /*int pageNumber = 1;
+    int pageSize = 5;
+    Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
+    Page<Product> page = ProductRepository.findAll(pageable);*/
     /**
      * Search Product by name
      * @param name

@@ -1,12 +1,14 @@
 package com.gestion.controller;
 
 import com.gestion.model.Holiday;
+import com.gestion.model.Product;
 import com.gestion.model.User;
 import com.gestion.service.*;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -228,5 +230,4 @@ public class AdminController {
         }
         return "adminHolidayList";
     }
-
 }

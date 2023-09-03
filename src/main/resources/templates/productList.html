@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
+<link rel="stylesheet" type="text/css"
+      href="webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
+<script src="webjars/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript"
+        src="webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -48,19 +54,31 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="product : ${listProduct}">
+        <tr th:each="product:${products.content}">
             <td th:text="${product.reference}"></td>
             <td th:text="${product.name}"></td>
             <td th:text="${product.description}"></td>
             <td th:text="${product.price}"></td>
             <td th:text="${product.quantity}"></td>
-            <td> <a th:href="@{/user/show-update-product-form/{id}(id=${product.id})}" class="btn btn-primary">Modifier</a>
-                <a th:href="@{/user/delete-product-by-id/{id}(id=${product.id})}" class="btn btn-danger">Supprimer</a>
-            </td>
+            <td> <a th:href="@{/user/show-update-product-form/{id}(id=${product.id})}" class="btn btn-primary">Modifier</a></td>
+            <td> <a th:href="@{/user/delete-product-by-id/{id}(id=${product.id})}" class="btn btn-danger" onclick="return confirm('Etes-vous sûr de vouloir supprimer le produit séléctionné ?')">Supprimer</a></td>
         </tr>
         </tbody>
     </table>
+    <ul class="nav nav-pills">
+        <li th:each="page,status:${pages}">
+            <a th:class="${status.index==currentPage?'btn btn-primary':'btn' }"
+               th:href="@{ product-list(page=${status.index})}"
+               th:text="${status.index}"></a>
+        </li>
+    </ul>
 </div>
 </body>
-
+<footer>
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+        © 2023 Copyright:
+        <a> Propriété de l'entreprise Link Electronics</a>
+    </div>
+    <!-- Copyright -->
+</footer>
 </html>
