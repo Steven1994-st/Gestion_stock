@@ -182,7 +182,7 @@ public class AdminController {
             model.addAttribute("holiday", holiday);
             return "adminAddHoliday";
         }
-        holidayService.getRepository().save(holiday);
+        holidayService.saveHoliday(holiday);
         return "redirect:/admin/holiday-list";
     }
 

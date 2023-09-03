@@ -2,46 +2,44 @@ package com.gestion.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name="PAYMENT")
 public class Payment extends Persistent{
 
-    @Column(name = "ref_transaction", nullable=false)
-    private String ref_transaction;
+    @Column(name = "ref_Transaction", nullable=false)
+    private String refTransaction;
     @Column(name = "amount", nullable=false)
-    private long amount;
+    private float amount;
 
-    @JsonIgnore
-    @OneToOne(mappedBy = "payment")
+    //    @JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
     private Order order;
 
     public Payment() {
     }
 
-    public Payment(String ref_transaction, long amount, Order order) {
-        this.ref_transaction = ref_transaction;
+    public Payment(String refTransaction, float amount, Order order) {
+        this.refTransaction = refTransaction;
         this.amount = amount;
         this.order = order;
     }
 
-    public String getRef_transaction() {
-        return ref_transaction;
+    public String getRefTransaction() {
+        return refTransaction;
     }
 
-    public void setRef_transaction(String ref_transaction) {
-        this.ref_transaction = ref_transaction;
+    public void setRefTransaction(String refTransaction) {
+        this.refTransaction = refTransaction;
     }
 
-    public long getAmount() {
+    public float getAmount() {
         return amount;
     }
 
-    public void setAmount(long amount) {
+    public void setAmount(float amount) {
         this.amount = amount;
     }
 

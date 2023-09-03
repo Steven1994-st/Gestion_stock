@@ -1,7 +1,6 @@
 package com.gestion.controller;
 
 import com.gestion.model.*;
-import com.gestion.repository.PaymentRepository;
 import com.gestion.service.*;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -15,7 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -50,7 +48,7 @@ public class UserController {
     private HolidayService holidayService;
 
     @Autowired
-    private PaymentRepository paymentRepository;
+    private PaymentService paymentService;
 
     public UserController() {
         this.logger = LoggerFactory.getLogger(this.getClass());
@@ -348,6 +346,7 @@ public class UserController {
             model.addAttribute("productList", productService.getRepository().findAll());
             return "viewProductsOrder";
         }
+        orderService.orderAmountUpdate(orderProduct.getOrder());
         orderProductService.getRepository().save(orderProduct);
 
         return "redirect:/user/view-product-order/"+orderProduct.getOrder().getId();
@@ -402,8 +401,7 @@ public class UserController {
             model.addAttribute("holiday", holiday);
             return "userAddHoliday";
         }
-        holiday.setStatus(Holiday.HOLIDAY_STATUS.PROCESSING);
-        holidayService.getRepository().save(holiday);
+        holidayService.saveHoliday(holiday);
         return "redirect:/user/holiday-list";
     }
 
@@ -496,5 +494,84 @@ public class UserController {
         return "redirect:/user/view-profile";
     }
 
+
+    /**
+     * Affichage de la page de facture et payement de commande
+     * @param orderId
+     * @param model
+     * @return
+     */
+    @RequestMapping("/show-order-payment-form/{orderId}")
+    public String viewOrderPaymentFormPage(@PathVariable(value = "orderId") long orderId,
+                                           Model model) {
+
+        Order order = orderService.getRepository().findById(orderId).get();
+        model.addAttribute("order", order);
+        model.addAttribute("listOrderProduct", order.getOrderProducts());
+        OrderProduct orderProduct = new OrderProduct();
+        orderProduct.setOrder(order);
+        model.addAttribute("orderProduct", orderProduct);
+
+        return "orderPayment";
+    }
+
+
+    /**
+     * Enregistrement de la facture d'une commande
+     * @param orderId
+     * @return
+     */
+    @RequestMapping("/order-payment/{orderId}")
+    public String OrderPayment(@PathVariable("orderId") long orderId, Model model) {
+
+        Order order = orderService.getRepository()
+                .findById(orderId).get();
+        Payment payment = paymentService.createOrderPayment(order);
+        order.setStatus(Order.ORDER_STATUS.ENDED);
+        order.setPayment(payment);
+        orderService.updateOrder(order);
+
+        model.addAttribute("listOrder",
+                orderService.getRepository().findAll());
+
+        return "redirect:/user/order-list";
+    }
+
+    // RESOURCES FOR NOTIFICATION
+
+    @RequestMapping("/notification-list")
+    public String viewNotificationPage(Model model) {
+
+        //Récupérer l'utilisateur connecté
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User currentUser = userService.getRepository().findByEmail(username);
+
+        List<Notification> notificationList = notificationService
+                .getRepository().findNotificationsByUser(currentUser.getId());
+
+        model.addAttribute("notificationList", notificationList);
+
+        return "notificationList";
+    }
+
+    @GetMapping("/delete-notification-by-id/{id}")
+    public String deleteNotification(@PathVariable(value = "id") long id) {
+
+        notificationService.getRepository().deleteById(id);
+        return "redirect:/user/notification-list";
+    }
+
+    @RequestMapping("/notification-search")
+    public String searchNotification(Model model, String keyword) {
+        if(keyword!=null) {
+            List<Notification> notificationList = notificationService.search(keyword);
+            model.addAttribute("notificationList", notificationList);
+            return "userHolidayList";
+        }else {
+            model.addAttribute("notificationList", notificationService.getRepository().findAll());
+            return "redirect:/user/notification-list";
+        }
+    }
 
 }

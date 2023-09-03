@@ -50,6 +50,23 @@ public class OrderService {
         return getRepository().save(orderFound);
     }
 
+    /**
+     * Mise à jour du montant de la commande
+     * @param order
+     * @return
+     */
+    @Transactional()
+    public void orderAmountUpdate(Order order){
+
+        order.getOrderProducts().forEach(orderProduct -> {
+            order.setAmount(order.getAmount()
+                    + orderProduct.getQuantity() * orderProduct.getProduct().getPrice() );
+        });
+
+        getRepository().save(order);
+    }
+
+
     @PersistenceContext
     private EntityManager entityManager;
     /**

@@ -86,10 +86,6 @@ public class Persistent implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public void setCreationDates(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
     /**
      * The date of last modification
      *

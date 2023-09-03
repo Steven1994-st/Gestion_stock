@@ -22,8 +22,29 @@ public class HolidayService {
     @Autowired
     HolidayRepository holidayRepository;
 
+    @Autowired
+    NotificationService notificationService;
+
     public HolidayRepository getRepository(){
         return holidayRepository;
+    }
+
+    /**
+     * Save a Holiday
+     * @param holiday
+     * @return
+     */
+    @Transactional()
+    public Holiday saveHoliday(Holiday holiday){
+
+        holiday.setStatus(Holiday.HOLIDAY_STATUS.PROCESSING);
+        holiday.setCreationDate(new Date());
+        String message = "Un congé a été ajouté pour l'utilisateur:" + " "
+                + holiday.getUser().getFirstname() + " " + holiday.getUser().getName();
+
+        notificationService.sendNotificationToAdmins(message);
+
+        return getRepository().save(holiday);
     }
 
     /**
@@ -44,6 +65,11 @@ public class HolidayService {
         holidayFound.setStatus(holiday.getStatus());
 
         holidayFound.setModificationDate(new Date());
+
+        String message = "Un congé a été modifié pour l'utilisateur:" + " "
+                + holiday.getUser().getFirstname() + " " + holiday.getUser().getName();
+
+        notificationService.sendNotificationToAdmins(message);
 
         return getRepository().save(holidayFound);
     }

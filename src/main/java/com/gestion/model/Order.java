@@ -17,6 +17,9 @@ public class Order extends Persistent{
     @Column(name = "QR_code")
     private String QR_code;
 
+    @Column(name = "amount")
+    private float amount;
+
     @Column(name = "status", nullable=false)
     private ORDER_STATUS status;
 
@@ -29,8 +32,7 @@ public class Order extends Persistent{
 //            inverseJoinColumns = @JoinColumn(name = "product_id"))
 //    private List<Product> products = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "payment_id", referencedColumnName = "id")
+    @OneToOne(mappedBy = "order")
     private Payment payment;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy ="order")
@@ -40,19 +42,21 @@ public class Order extends Persistent{
     public Order() {
     }
 
-    public Order(String description, boolean reservation, String QR_code, ORDER_STATUS status, Customer customer, List<Product> products, Payment payment) {
+    public Order(String description, boolean reservation, String QR_code, float amount, ORDER_STATUS status, Customer customer, Payment payment) {
         this.description = description;
         this.reservation = reservation;
         this.QR_code = QR_code;
+        this.amount = amount;
         this.status = status;
         this.customer = customer;
         this.payment = payment;
     }
 
-    public Order(String description, boolean reservation, String QR_code, ORDER_STATUS status, Customer customer, Payment payment, List<OrderProduct> orderProducts) {
+    public Order(String description, boolean reservation, String QR_code, float amount, ORDER_STATUS status, Customer customer, Payment payment, List<OrderProduct> orderProducts) {
         this.description = description;
         this.reservation = reservation;
         this.QR_code = QR_code;
+        this.amount = amount;
         this.status = status;
         this.customer = customer;
         this.payment = payment;
@@ -113,6 +117,14 @@ public class Order extends Persistent{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public float getAmount() {
+        return amount;
+    }
+
+    public void setAmount(float amount) {
+        this.amount = amount;
     }
 
     /**

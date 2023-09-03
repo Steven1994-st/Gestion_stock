@@ -40,7 +40,7 @@
               <label class="col-sm-2 col-form-label" for="customer">Client</label>
               <select class="form-control" id="customer" th:field="*{customer}">
                 <option value="0">Selectionner un client</option>
-                <option th:each="customer : ${customerList}" th:value="${customer.id}" th:text="${customer.name}"></option>
+                <option th:each="customer : ${customerList}" th:value="${customer.id}" th:text="${customer.firstname} + ' '+ ${customer.name}"></option>
               </select>
               <p class="text-danger" th:errors="*{customer}"
                  th:if="${#fields.hasErrors('customer')}"></p>

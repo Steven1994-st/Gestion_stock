@@ -52,7 +52,7 @@
             <label class="col-sm-2 col-form-label" for="user">Personnel</label>
             <select class="form-control" id="user" th:field="*{user}">
               <option value="0">Selectionner un personnel</option>
-              <option th:each="user : ${userList}" th:value="${user.id}" th:text="${user.name}"></option>
+              <option th:each="user : ${userList}" th:value="${user.id}" th:text="${user.firstname} + ' '+ ${user.name}"></option>
             </select>
             <p class="text-danger" th:errors="*{user}"
                th:if="${#fields.hasErrors('user')}"></p>
