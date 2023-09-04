@@ -2,6 +2,8 @@ package com.gestion.controller;
 
 import com.gestion.model.*;
 import com.gestion.service.*;
+
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -603,5 +609,21 @@ public class UserController {
             return "redirect:/user/notification-list";
         }
     }
+    @GetMapping("/excel")
+    public void generateExcelReport(HttpServletResponse response) throws Exception{
+
+        response.setContentType("application/octet-stream");
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment;filename=Listes des produits en stoks.xls";
+
+        response.setHeader(headerKey, headerValue);
+
+        productService.generateExcel(response);
+        response.flushBuffer();
+    }
 
 }
+
+
+
