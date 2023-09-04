@@ -46,11 +46,49 @@
       <td th:text="${notification.message}" class="alert alert-primary" role="alert"></td>
 <!--      <td th:text="${notification.getStatus()}"></td>-->
       <td>
-        <a th:href="@{/user/delete-notification-by-id/{id}(id=${notification.id})}" class="btn btn-danger">Supprimer</a>
+        <a th:href="@{/user/delete-notification-by-id/{id}(id=${notification.id})}" class="btn btn-danger" onclick="return confirm('Etes-vous sûr de vouloir supprimer la notification séléctionné ?')">Supprimer</a>
       </td>
     </tr>
     </tbody>
   </table>
+
+  <div th:if="${totalPages > 1}">
+    <div class="row col-sm-10 nav nav-pills">
+      <div class="col-sm-4">
+        Total éléments: [[${totalItems}]]
+      </div>
+
+      <div class="col-sm-1">
+        <a th:if="${currentPage > 0 }" th:href="@{notification-list(page= 0)}">Premier</a>
+        <span th:unless="${currentPage > 0}">Premier</span>
+      </div>
+
+      <div class="col-sm-1" style="margin-right: 50px">
+        <a th:if="${currentPage > 0}" th:href="@{notification-list(page= ${currentPage - 1})}">Précédent</a>
+        <span th:unless="${currentPage > 0}">Précédent</span>
+      </div>
+
+      <div class="col-sm-2">
+        <span th:each="i,pageSelected: ${#numbers.sequence(1, totalPages)}">
+          <a th:if="${currentPage != i - 1}"
+             th:href="@{notification-list(page= ${i}-1)}">
+            [[${i}]]
+          </a>
+          <!--             th:class="${i==currentPage?'btn btn-primary':'' }"-->
+          <span th:unless="${currentPage != (i - 1)}">[[${i}]]</span> &nbsp; &nbsp;
+        </span>
+      </div>
+      <div class="col-sm-1">
+        <a th:if="${currentPage < (totalPages - 1) }" th:href="@{notification-list(page= ${currentPage + 1})}">Suivant</a>
+        <span th:unless="${currentPage < (totalPages - 1)}">Suivant</span>
+      </div>
+
+      <div class="col-sm-1">
+        <a th:if="${currentPage < (totalPages - 1)}" th:href="@{notification-list(page= ${totalPages - 1})}">Dernier</a>
+        <span th:unless="${currentPage < (totalPages -1)}">Dernier</span>
+      </div>
+    </div>
+  </div>
 </div>
 
 </body>

@@ -73,15 +73,20 @@
 <!--            <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>&nbsp;Sign in-->
 <!--          </a>-->
          <ul class="nav navbar-nav navbar-right">
-             <a class="text-center p-3" style="background-color: rgba(0, 0, 0, 0);">
-                 <span sec:authentication="name" > </span>
-             </a>
 
+             <li>
+                 <a class="text-center p-3">
+                     <span sec:authentication="name" style="color: olive"> </span>
+                 </a>
+             </li>
 
-                     <a style="background-color: #dd4b39;"href="/logout" th:href="@{/logout}" onclick="$('#form').submit();">
-                         <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Déconnexion
-                     </a>
-             </div>
+             <li>
+                 <a href="/logout" th:href="@{/logout}" onclick="$('#form').submit();">
+                     <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+                     &nbsp;Déconnexion
+                 </a>
+             </li>
+
          </ul>
      </div>
   </nav>

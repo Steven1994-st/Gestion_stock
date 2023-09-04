@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -58,14 +60,15 @@ public class UserController {
     // RESOURCES FOR PRODUCTS
    @RequestMapping("/product-list")
     public String viewProductListPage(Model model,
-                                      @RequestParam (name="page",defaultValue = "1") int page,
-                                      @RequestParam (name="size", defaultValue = "3") int size) {
+                                      @RequestParam (name="page",defaultValue = "0") int page,
+                                      @RequestParam (name="size", defaultValue = "4") int size) {
 
+       Page<Product> productPage = productService.getRepository().findAll(PageRequest.of(page, size));
+       model.addAttribute("listProduct",productPage);
+       model.addAttribute("totalPages", productPage.getTotalPages());
+       model.addAttribute("totalItems", productPage.getTotalElements());
+       model.addAttribute("currentPage", page);
 
-           Page<Product> prods = productService.getEMpByPaginate(page, size);
-           model.addAttribute("products", prods);
-           model.addAttribute("pages", new int[prods.getTotalPages()]);
-           model.addAttribute("currentPage", page);
        return "productList";
     }
 
@@ -157,8 +160,16 @@ public class UserController {
     // RESOURCES FOR CUSTOMER
 
     @RequestMapping("/customer-list")
-    public String viewCustomerListPage(Model model) {
-        model.addAttribute("listCustomer", customerService.getRepository().findAll());
+    public String viewCustomerListPage(Model model,
+                                       @RequestParam (name="page",defaultValue = "0") int page,
+                                       @RequestParam (name="size", defaultValue = "4") int size) {
+
+        Page<Customer> customerPage = customerService.getRepository().findAll(PageRequest.of(page, size));
+        model.addAttribute("listCustomer",customerPage);
+        model.addAttribute("totalPages", customerPage.getTotalPages());
+        model.addAttribute("totalItems", customerPage.getTotalElements());
+        model.addAttribute("currentPage", page);
+
         return "customerList";
     }
 
@@ -235,10 +246,16 @@ public class UserController {
     // RESOURCES FOR ORDER
 
     @RequestMapping("/order-list")
-    public String viewOrderListPage(Model model) {
+    public String viewOrderListPage(Model model,
+                                    @RequestParam (name="page",defaultValue = "0") int page,
+                                    @RequestParam (name="size", defaultValue = "4") int size) {
 
-        model.addAttribute("listOrder",
-                orderService.getRepository().findAll());
+        Page<Order> orderPage = orderService.getRepository().findAll(PageRequest.of(page, size));
+        model.addAttribute("listOrder",orderPage);
+        model.addAttribute("totalPages", orderPage.getTotalPages());
+        model.addAttribute("totalItems", orderPage.getTotalElements());
+        model.addAttribute("currentPage", page);
+
         return "orderList";
     }
 
@@ -367,15 +384,22 @@ public class UserController {
     // RESOURCES FOR HOLIDAY
 
     @RequestMapping("/holiday-list")
-    public String viewHolidayListPage(Model model) {
+    public String viewHolidayListPage(Model model,
+                                      @RequestParam (name="page",defaultValue = "0") int page,
+                                      @RequestParam (name="size", defaultValue = "4") int size) {
 
         //Récupérer l'utilisateur connecté
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User currentUser = userService.getRepository().findByEmail(username);
 
-        model.addAttribute("listHoliday",
-                holidayService.getRepository().findHolidaysByUser(currentUser.getId()));
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Holiday> holidayPage = holidayService.getRepository().findHolidaysByUser(currentUser.getId(), pageable);
+        model.addAttribute("listHoliday",holidayPage);
+        model.addAttribute("totalPages", holidayPage.getTotalPages());
+        model.addAttribute("totalItems", holidayPage.getTotalElements());
+        model.addAttribute("currentPage", page);
+
         return "userHolidayList";
     }
 
@@ -540,17 +564,23 @@ public class UserController {
     // RESOURCES FOR NOTIFICATION
 
     @RequestMapping("/notification-list")
-    public String viewNotificationPage(Model model) {
+    public String viewNotificationPage(Model model,
+                                       @RequestParam (name="page",defaultValue = "0") int page,
+                                       @RequestParam (name="size", defaultValue = "4") int size) {
 
         //Récupérer l'utilisateur connecté
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User currentUser = userService.getRepository().findByEmail(username);
 
-        List<Notification> notificationList = notificationService
-                .getRepository().findNotificationsByUser(currentUser.getId());
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Notification> notificationPage = notificationService
+                .getRepository().findNotificationsByUser(currentUser.getId(), pageable);
 
-        model.addAttribute("notificationList", notificationList);
+        model.addAttribute("notificationList", notificationPage);
+        model.addAttribute("totalPages", notificationPage.getTotalPages());
+        model.addAttribute("totalItems", notificationPage.getTotalElements());
+        model.addAttribute("currentPage", page);
 
         return "notificationList";
     }

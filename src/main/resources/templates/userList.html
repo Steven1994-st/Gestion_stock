@@ -41,21 +41,60 @@
       <th>Nom</th>
       <th>Email</th>
       <th>Role</th>
-      <th> Actions </th>
+      <th>Actions</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="user : ${listUser}">
+    <tr th:each="user:${listUser}">
       <td th:text="${user.firstname}"></td>
       <td th:text="${user.name}"></td>
       <td th:text="${user.email}"></td>
       <td th:text="${user.role}"></td>
       <td> <a th:href="@{/admin/show-update-user-form/{id}(id=${user.id})}" class="btn btn-primary">Modifier</a>
-        <a th:href="@{/admin/delete-user-by-id/{id}(id=${user.id})}" class="btn btn-danger">Supprimer</a>
+        <a th:href="@{/admin/delete-user-by-id/{id}(id=${user.id})}" class="btn btn-danger" onclick="return confirm('Etes-vous sûr de vouloir supprimer l\'utilisateur séléctionné ?')">Supprimer</a>
       </td>
     </tr>
     </tbody>
   </table>
+
+  <div th:if="${totalPages > 1}">
+    <div class="row col-sm-10 nav nav-pills">
+      <div class="col-sm-4">
+        Total éléments: [[${totalItems}]]
+      </div>
+
+      <div class="col-sm-1">
+        <a th:if="${currentPage > 0 }" th:href="@{user-list(page= 0)}">Premier</a>
+        <span th:unless="${currentPage > 0}">Premier</span>
+      </div>
+
+      <div class="col-sm-1" style="margin-right: 50px">
+        <a th:if="${currentPage > 0}" th:href="@{user-list(page= ${currentPage - 1})}">Précédent</a>
+        <span th:unless="${currentPage > 0}">Précédent</span>
+      </div>
+
+      <div class="col-sm-2">
+        <span th:each="i,pageSelected: ${#numbers.sequence(1, totalPages)}">
+          <a th:if="${currentPage != i - 1}"
+             th:href="@{user-list(page= ${i}-1)}">
+            [[${i}]]
+          </a>
+<!--             th:class="${i==currentPage?'btn btn-primary':'' }"-->
+          <span th:unless="${currentPage != (i - 1)}">[[${i}]]</span> &nbsp; &nbsp;
+        </span>
+      </div>
+      <div class="col-sm-1">
+        <a th:if="${currentPage < (totalPages - 1) }" th:href="@{user-list(page= ${currentPage + 1})}">Suivant</a>
+        <span th:unless="${currentPage < (totalPages - 1)}">Suivant</span>
+      </div>
+
+      <div class="col-sm-1">
+        <a th:if="${currentPage < (totalPages - 1)}" th:href="@{user-list(page= ${totalPages - 1})}">Dernier</a>
+        <span th:unless="${currentPage < (totalPages -1)}">Dernier</span>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!--<div class="modal fade text-center" id="confirmModal">-->

@@ -9,6 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -42,8 +46,16 @@ public class AdminController {
 
 
     @RequestMapping("/user-list")
-    public String viewUserListPage(Model model) {
-        model.addAttribute("listUser", userService.getRepository().findAll());
+    public String viewUserListPage(Model model,
+                                   @RequestParam (name="page",defaultValue = "0") int page,
+                                   @RequestParam (name="size", defaultValue = "3") int size) {
+
+        Page<User> userPage = userService.getRepository().findAll(PageRequest.of(page, size));
+        model.addAttribute("listUser",userPage);
+        model.addAttribute("totalPages", userPage.getTotalPages());
+        model.addAttribute("totalItems", userPage.getTotalElements());
+        model.addAttribute("currentPage", page);
+
         return "userList";
     }
 
@@ -146,21 +158,35 @@ public class AdminController {
 
     @RequestMapping("/user-search")
     public String searchUser(Model model, String keyword) {
-        if(keyword!=null) {
+        if(keyword!=null && !keyword.isEmpty()) {
             List<User> userList = userService.search(keyword);
             model.addAttribute("listUser", userList);
+            return "userList";
         }else {
-            model.addAttribute("listUser", userService.getRepository().findAll());
+            return "redirect:/admin/user-list";
         }
-        return "userList";
     }
 
 
     // RESOURCES FOR HOLIDAY
 
     @RequestMapping("/holiday-list")
-    public String viewHolidayListPage(Model model) {
-        model.addAttribute("listHoliday", holidayService.getRepository().findAll());
+    public String viewHolidayListPage(Model model,
+                                      @RequestParam (name="page",defaultValue = "0") int page,
+                                      @RequestParam (name="size", defaultValue = "4") int size) {
+
+        //Récupérer l'utilisateur connecté
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User currentUser = userService.getRepository().findByEmail(username);
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Holiday> holidayPage = holidayService.getRepository().findAll(pageable);
+        model.addAttribute("listHoliday",holidayPage);
+        model.addAttribute("totalPages", holidayPage.getTotalPages());
+        model.addAttribute("totalItems", holidayPage.getTotalElements());
+        model.addAttribute("currentPage", page);
+
         return "adminHolidayList";
     }
 

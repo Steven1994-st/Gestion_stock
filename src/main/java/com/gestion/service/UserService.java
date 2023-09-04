@@ -107,7 +107,7 @@ public class UserService {
         userFound.setRole(user.getRole());
         userFound.setPhone(user.getPhone());
         userFound.setAddress(user.getAddress());
-
+        userFound.setEmail(user.getEmail());
         userFound.setModificationDate(new Date());
 
         return getRepository().save(userFound);

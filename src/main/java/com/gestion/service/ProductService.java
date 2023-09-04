@@ -79,7 +79,4 @@ public class ProductService
         return query.getResultList();
     }
 
-    public Page<Product> getEMpByPaginate(int page, int size) {
-        return productRepository.findAll(PageRequest.of(page, size));
-    }
 }
