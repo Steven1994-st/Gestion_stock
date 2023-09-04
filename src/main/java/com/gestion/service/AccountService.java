@@ -72,8 +72,8 @@ public class AccountService {
         User user2 = updateTokenOrStatusOrPwd(user);
 
         String mailSubject = "Réinitialisation du mot de passe";
-        String message = "Bonjour,\n\n Veuillez utiliser ce code pour réinitialiser votre mot de passe : "
-                + user2.getToken()+ "\n\nMerci, \nTFE Gestion de stock";
+        String message = "Bonjour"+" "+user2.getName()+"\n\n Veuillez utiliser ce code pour réinitialiser votre mot de passe : "
+                + user2.getToken()+ "\n\nMerci, \n Equipe Link électronics";
         sendMail(user2.getEmail(), mailSubject, message);
 
         return user2;
