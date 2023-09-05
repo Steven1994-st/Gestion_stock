@@ -17,10 +17,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -67,9 +69,10 @@ public class UserController {
    @RequestMapping("/product-list")
     public String viewProductListPage(Model model,
                                       @RequestParam (name="page",defaultValue = "0") int page,
-                                      @RequestParam (name="size", defaultValue = "4") int size) {
+                                      @RequestParam (name="size", defaultValue = "3") int size) {
 
        Page<Product> productPage = productService.getRepository().findAll(PageRequest.of(page, size));
+
        model.addAttribute("listProduct",productPage);
        model.addAttribute("totalPages", productPage.getTotalPages());
        model.addAttribute("totalItems", productPage.getTotalElements());
@@ -87,7 +90,9 @@ public class UserController {
 
     @PostMapping("/add-product")
     public String saveNewProduct(@Valid @ModelAttribute("product") Product product,
-                               BindingResult result, Model model) {
+                                 @RequestParam("imageData") MultipartFile imageData,
+                               BindingResult result, Model model) throws IOException {
+
         Product productFound = productService.getRepository()
                 .findProductByReference(product.getReference());
 
@@ -99,7 +104,8 @@ public class UserController {
             model.addAttribute("product", product);
             return "addProduct";
         }
-        productService.getRepository().save(product);
+        productService.saveProductAndImage(product, imageData);
+
         return "redirect:/user/product-list";
     }
 
@@ -116,8 +122,11 @@ public class UserController {
     }
 
     @PostMapping("/update-product/{id}")
-    public String updateProduct(@PathVariable("id") long id, @Valid @ModelAttribute("product") Product product,
-                             BindingResult result, Model model) {
+    public String updateProduct(@PathVariable("id") long id,
+                                @Valid @ModelAttribute("product") Product product,
+                                @RequestParam("imageData") MultipartFile imageData,
+                             BindingResult result, Model model) throws IOException {
+
         Product existingProduct = productService.getRepository().findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid User Id:" + id));
 
@@ -131,7 +140,8 @@ public class UserController {
         }
 
         product.setId(id);
-        productService.updateProduct(product);
+        productService.updateProductAndImage(product, imageData);
+
         return "redirect:/user/product-list";
     }
 

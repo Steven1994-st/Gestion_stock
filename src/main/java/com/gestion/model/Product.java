@@ -25,6 +25,11 @@ public class Product extends Persistent{
 	@JoinColumn(name = "user")
 	private User user;
 
+	@Lob
+	@Column(name = "image", columnDefinition = "MEDIUMBLOB")
+	private String image;
+
+
 //	@ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
 //	@JsonIgnore
 //	private List<Order> orders = new ArrayList<>();
@@ -101,6 +106,14 @@ public class Product extends Persistent{
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 
 	public List<OrderProduct> getOrderProducts() {

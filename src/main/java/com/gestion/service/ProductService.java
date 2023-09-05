@@ -2,6 +2,7 @@ package com.gestion.service;
 
 import com.gestion.model.Product;
 import com.gestion.repository.ProductRepository;
+import com.gestion.utils.ImageUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -16,14 +17,14 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ProductService
@@ -40,13 +41,14 @@ public class ProductService
         return productRepository;
     }
 
+
     /**
      * Update a Product
      * @param product
      * @return
      */
     @Transactional()
-    public Product updateProduct(Product product){
+    public Product updateProduct(Product product) {
 
         Product productFound = getRepository()
                 .findById(product.getId()).get();
@@ -56,6 +58,45 @@ public class ProductService
         productFound.setDescription(product.getDescription());
         productFound.setPrice(product.getPrice());
         productFound.setQuantity(product.getQuantity());
+
+        productFound.setModificationDate(new Date());
+
+        return getRepository().save(productFound);
+    }
+
+    /**
+     * save a Product and image
+     * @param product
+     * @return product saved
+     */
+    @Transactional()
+    public Product saveProductAndImage(Product product, MultipartFile image) throws IOException {
+
+        product.setImage(ImageUtil.encodeImage(image));
+
+        product.setCreationDate(new Date());
+
+        return getRepository().save(product);
+    }
+
+    /**
+     * Update a Product and image
+     * @param product
+     * @return
+     */
+    @Transactional()
+    public Product updateProductAndImage(Product product, MultipartFile image) throws IOException {
+
+        Product productFound = getRepository()
+                .findById(product.getId()).get();
+
+        productFound.setReference(product.getReference());
+        productFound.setName(product.getName());
+        productFound.setDescription(product.getDescription());
+        productFound.setPrice(product.getPrice());
+        productFound.setQuantity(product.getQuantity());
+
+        productFound.setImage(ImageUtil.encodeImage(image));
 
         productFound.setModificationDate(new Date());
 

@@ -22,8 +22,11 @@
       <h1>Modification produit</h1>
       <hr>
 
-      <form action="#" th:action="@{/user/update-product/{id}(id=${product.id})}"
-            th:object="${product}" method="POST">
+      <form action="#"
+            th:action="@{/user/update-product/{id}(id=${product.id})}"
+            th:object="${product}"
+            enctype="multipart/form-data"
+            method="POST">
         <input type="text" th:field="*{reference}" id="reference" placeholder="Référence" class="form-control mb-4 col-8">
 
         <input type="text" th:field="*{name}" id="name" placeholder="Nom" class="form-control mb-4 col-8">
@@ -33,6 +36,11 @@
         <input type="text" th:field="*{price}" id="price" placeholder="Prix" class="form-control mb-4 col-8">
 
         <input type="text" th:field="*{quantity}" id="quantity" placeholder="Quantité" class="form-control mb-4 col-8">
+
+        <div class="mb-3">
+          <label class="col-sm-2 col-form-label" for="imageData">Image</label>
+          <input type="file" name="imageData" id="imageData" accept="image/*" />
+        </div>
 
         <br><br>
 

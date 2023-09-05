@@ -19,6 +19,7 @@
               role="form"
               th:action="@{/user/add-product}"
               th:object="${product}"
+              enctype="multipart/form-data"
       >
         <h1 style="margin-bottom: 10px">Ajout de produit</h1>
         <hr>
@@ -57,6 +58,13 @@
           <input class="form-control" id="quantity" name="quantity" type="text">
           <p class="text-danger" th:errors="*{quantity}"
              th:if="${#fields.hasErrors('quantity')}"></p>
+        </div>
+
+        <div class="mb-3">
+          <label class="col-sm-2 col-form-label" for="imageData">Image</label>
+          <input type="file" name="imageData" id="imageData" accept="image/*" />
+<!--          <p class="text-danger" th:errors="*{imageData}"-->
+<!--             th:if="${#fields.hasErrors('imageData')}"></p>-->
         </div>
 
         <div class="mb-3">
