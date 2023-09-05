@@ -95,11 +95,11 @@ public class ProductService
         HSSFRow row = sheet.createRow(0);
 
         row.createCell(0).setCellValue("ID du produit");
-        row.createCell(1).setCellValue("reference");
-        row.createCell(2).setCellValue("name");
-        row.createCell(3).setCellValue("description");
-        row.createCell(4).setCellValue("price");
-        row.createCell(5).setCellValue("quantity");
+        row.createCell(1).setCellValue("Reference");
+        row.createCell(2).setCellValue("Name");
+        row.createCell(3).setCellValue("Description");
+        row.createCell(4).setCellValue("Price");
+        row.createCell(5).setCellValue("Quantity");
 
         int dataRowIndex = 1;
 

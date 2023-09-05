@@ -27,6 +27,7 @@
     <hr>
 
     <a th:href="@{/user/show-add-product-form}" class="btn btn-primary mb-3"> Ajout produit </a>
+    <a th:href="@{/user/excel}" class="btn btn-primary mb-3">  Exporter la liste des produits</a>
 
     <div class="mb-3">
         <form th:action="@{/user/product-search}" method="get">
@@ -106,7 +107,6 @@
         </div>
     </div>
 
-    <a th:href="@{/user/excel}">  Exporter la liste des produits</a>
 
 <!--    <ul class="nav nav-pills">-->
 <!--        <li th:each="page,status:${pages}">-->
