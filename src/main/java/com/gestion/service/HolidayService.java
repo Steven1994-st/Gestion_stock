@@ -13,12 +13,16 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 @Service()
 public class HolidayService {
 
+    DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+    String currentDateTime = dateFormatter.format(new Date());
     @Autowired
     HolidayRepository holidayRepository;
 
@@ -40,7 +44,7 @@ public class HolidayService {
         holiday.setStatus(Holiday.HOLIDAY_STATUS.PROCESSING);
         holiday.setCreationDate(new Date());
         String message = "Le congé \"" +holiday.getComment()+ "\" a été ajouté pour l'utilisateur:" + " "
-                + holiday.getUser().getFirstname() + " " + holiday.getUser().getName();
+                + holiday.getUser().getFirstname() + " " + holiday.getUser().getName() +" "+"le:"+ " " +currentDateTime;
 
         notificationService.sendNotificationToAdmins(message);
 
@@ -67,7 +71,7 @@ public class HolidayService {
         holidayFound.setModificationDate(new Date());
 
         String message = "Le congé \""+holiday.getComment()+ "\" a été modifié pour l'utilisateur: " +
-                holiday.getUser().getFirstname() + " " + holiday.getUser().getName();
+                holiday.getUser().getFirstname() + " " + holiday.getUser().getName()+" "+"le:"+ " " +currentDateTime;;
 
         notificationService.sendNotificationToAdmins(message);
 
@@ -90,7 +94,7 @@ public class HolidayService {
         }
 
         String message = "Le congé \"" +holiday.getComment()+
-                "\" " +status+ " par un administrateur";
+                "\" " +status+ " par un administrateur le :"+" "+currentDateTime;
 
         notificationService.sendNotification(message, holiday.getUser());
     }
