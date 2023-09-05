@@ -25,7 +25,7 @@
     <form th:action="@{/user/holiday-search}" method="get">
       <div style="display: flex;">
         <input type="search" id="keyword" name="keyword" th:value="${keyword}"
-               placeholder="Nom ou prénom du personnel" aria-describedby="button-addon5"
+               placeholder="Commentaire congé ou nom du personnel" aria-describedby="button-addon5"
                class="form-control col-4">
         <button id="button-addon5" type="submit" class="btn btn-primary">
           <i class="fa fa-search"> </i>
@@ -97,5 +97,7 @@
   </div>
 </div>
 </body>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 </html>

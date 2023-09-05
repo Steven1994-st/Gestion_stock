@@ -101,8 +101,10 @@ public class NotificationService {
         String criteriaStr = "%" + keyword.toUpperCase() + "%";
 
         Predicate predicate = criteriaBuilder.or(criteriaBuilder
-                        .like(criteriaBuilder.upper(root.get("name")), criteriaStr),
-                criteriaBuilder.like(criteriaBuilder.upper(root.get("firstname")), criteriaStr));
+                        .like(criteriaBuilder.upper(root.get("message")), criteriaStr),
+                criteriaBuilder.like(criteriaBuilder.upper(root.get("user").get("name")), criteriaStr),
+                criteriaBuilder.like(criteriaBuilder.upper(root.get("user").get("firstname")), criteriaStr)
+                );
         criteriaQuery.where(predicate);
 
         TypedQuery<Notification> query = entityManager.createQuery(criteriaQuery);

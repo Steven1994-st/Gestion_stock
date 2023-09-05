@@ -112,8 +112,10 @@ public class HolidayService {
         String criteriaStr = "%" + keyword.toUpperCase() + "%";
 
         Predicate predicate = criteriaBuilder.or(criteriaBuilder
-                        .like(criteriaBuilder.upper(root.get("name")), criteriaStr),
-                criteriaBuilder.like(criteriaBuilder.upper(root.get("firstname")), criteriaStr));
+                        .like(criteriaBuilder.upper(root.get("comment")), criteriaStr),
+                criteriaBuilder.like(criteriaBuilder.upper(root.get("user").get("name")), criteriaStr),
+                criteriaBuilder.like(criteriaBuilder.upper(root.get("user").get("firstname")), criteriaStr)
+                );
         criteriaQuery.where(predicate);
 
         TypedQuery<Holiday> query = entityManager.createQuery(criteriaQuery);

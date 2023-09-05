@@ -58,12 +58,16 @@ public class OrderService {
     @Transactional()
     public void orderAmountUpdate(Order order){
 
-        order.getOrderProducts().forEach(orderProduct -> {
-            order.setAmount(order.getAmount()
+        Order orderFound = getRepository().findById(order.getId()).get();
+
+        orderFound.setAmount(0);
+
+        orderFound.getOrderProducts().forEach(orderProduct -> {
+            orderFound.setAmount(orderFound.getAmount()
                     + orderProduct.getQuantity() * orderProduct.getProduct().getPrice() );
         });
 
-        getRepository().save(order);
+        getRepository().save(orderFound);
     }
 
 
@@ -82,8 +86,10 @@ public class OrderService {
         String criteriaStr = "%" + keyword.toUpperCase() + "%";
 
         Predicate predicate = criteriaBuilder.or(criteriaBuilder
-                        .like(criteriaBuilder.upper(root.get("name")), criteriaStr),
-                criteriaBuilder.like(criteriaBuilder.upper(root.get("firstname")), criteriaStr));
+                        .like(criteriaBuilder.upper(root.get("description")), criteriaStr),
+                criteriaBuilder.like(criteriaBuilder.upper(root.get("customer").get("name")), criteriaStr),
+                criteriaBuilder.like(criteriaBuilder.upper(root.get("customer").get("firstname")), criteriaStr)
+        );
         criteriaQuery.where(predicate);
 
         TypedQuery<Order> query = entityManager.createQuery(criteriaQuery);

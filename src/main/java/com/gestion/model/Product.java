@@ -19,7 +19,7 @@ public class Product extends Persistent{
 	@Column(name = "price", nullable=false)
 	private float price;
 	@Column(name = "quantity", nullable=false)
-	private long quantity;
+	private int quantity;
 
 	@ManyToOne()
 	@JoinColumn(name = "user")
@@ -36,7 +36,7 @@ public class Product extends Persistent{
 	public Product() {
 	}
 
-	public Product(String reference, String name, String description, float price, long quantity, User user) {
+	public Product(String reference, String name, String description, float price, int quantity, User user) {
 		this.reference = reference;
 		this.name = name;
 		this.description = description;
@@ -45,7 +45,7 @@ public class Product extends Persistent{
 		this.user = user;
 	}
 
-	public Product(String reference, String name, String description, float price, long quantity, User user, List<OrderProduct> orderProducts) {
+	public Product(String reference, String name, String description, float price, int quantity, User user, List<OrderProduct> orderProducts) {
 		this.reference = reference;
 		this.name = name;
 		this.description = description;
@@ -87,11 +87,11 @@ public class Product extends Persistent{
 		this.price = price;
 	}
 
-	public long getQuantity() {
+	public int getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(long quantity) {
+	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
 

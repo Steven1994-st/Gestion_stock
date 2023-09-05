@@ -48,7 +48,7 @@ public class AdminController {
     @RequestMapping("/user-list")
     public String viewUserListPage(Model model,
                                    @RequestParam (name="page",defaultValue = "0") int page,
-                                   @RequestParam (name="size", defaultValue = "3") int size) {
+                                   @RequestParam (name="size", defaultValue = "4") int size) {
 
         Page<User> userPage = userService.getRepository().findAll(PageRequest.of(page, size));
         model.addAttribute("listUser",userPage);
@@ -65,32 +65,6 @@ public class AdminController {
         model.addAttribute("user", user);
         return "addUser";
     }
-
-//    @PostMapping("/registration/{role}")
-//    public String registration(@PathVariable String role,
-//            @Valid @ModelAttribute("user") User user,
-//            BindingResult result,
-//            Model model) {
-//        User existingUser = userService.getRepository().findByEmail(user.getEmail());
-//
-//        if (existingUser != null)
-//            result.rejectValue("email", null,
-//                    "User already registered !!!");
-//
-//        if (result.hasErrors()) {
-//            model.addAttribute("user", user);
-//            return "addUser";
-//        }
-//
-//        if(role.equals("ADMIN"))
-//            user.setRole(User.ROLE.ADMIN);
-//        else
-//            user.setRole(User.ROLE.EMPLOYEE);
-//
-//        userService.saveNewUser(user);
-//        return "redirect:/admin/userList";
-////        return "redirect:/registration?success";
-//    }
 
     @PostMapping("/registration")
     public String registration(@Valid @ModelAttribute("user") User user,
@@ -175,10 +149,6 @@ public class AdminController {
                                       @RequestParam (name="page",defaultValue = "0") int page,
                                       @RequestParam (name="size", defaultValue = "4") int size) {
 
-        //Récupérer l'utilisateur connecté
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User currentUser = userService.getRepository().findByEmail(username);
 
         Pageable pageable = PageRequest.of(page, size);
         Page<Holiday> holidayPage = holidayService.getRepository().findAll(pageable);
@@ -252,12 +222,15 @@ public class AdminController {
 
     @RequestMapping("/holiday-search")
     public String searchHoliday(Model model, String keyword) {
+
         if(keyword!=null) {
             List<Holiday> holidayList = holidayService.search(keyword);
             model.addAttribute("listHoliday", holidayList);
+
+            return "adminHolidayList";
         }else {
-            model.addAttribute("listHoliday", holidayService.getRepository().findAll());
+            return "redirect:/admin/holiday-list";
         }
-        return "adminHolidayList";
+
     }
 }

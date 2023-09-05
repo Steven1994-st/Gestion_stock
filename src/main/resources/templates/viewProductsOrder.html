@@ -22,7 +22,7 @@
 
   <div th:object="${order}" class="row" style="display: flex; margin-bottom: 40px" >
     <div class="col-xs-12 col-sm-4 col-md-2">
-      <h5>Description:</h5>
+      <h5>Commande:</h5>
       <span th:text="${order.description}"></span>
     </div>
 
@@ -43,9 +43,7 @@
 
   </div>
 
-  <br><br>
-
-  <div class="row">
+  <div style="margin-bottom: 20px">
     <form
             method="post"
             role="form"
@@ -57,8 +55,8 @@
 <!--          Ajout reussi !!!-->
 <!--        </div>-->
 <!--      </div>-->
-      <div class="mb-3">
-        <label for="products">Selectionner un produit</label>
+      <div style="display: inline-block; margin-right: 20px">
+        <h6 for="products">Selectionner un produit</h6>
         <select class="form-control selectpicker" th:field="*{product}" id="products">
           <option th:each="product : ${productList}"
                   th:value="${product.id}"
@@ -68,18 +66,19 @@
         <p class="text-danger" th:errors="*{product}"
            th:if="${#fields.hasErrors('product')}"></p>
       </div>
-      <div class="mb-3">
-        <label class="form-label" for="quantity">Quantité</label>
+
+      <div style="display: inline-block; margin-right: 20px">
+        <h6 class="form-label" for="quantity">Quantité</h6>
         <input class="form-control" id="quantity" name="quantity" type="text">
         <p class="text-danger" th:errors="*{quantity}"
            th:if="${#fields.hasErrors('quantity')}"></p>
       </div>
 
-      <input type="hidden" th:field="*{order}" class="form-control mb-4 col-8">
-
-      <div class="mb-3">
+      <div style="display: inline-block; margin-right: 20px">
         <button class="btn btn-primary mb-3" type="submit">Ajouter</button>
       </div>
+
+      <input type="hidden" th:field="*{order}" class="form-control col-xs-12 col-sm-4 col-md-2">
     </form>
   </div>
 
@@ -108,7 +107,12 @@
     </tr>
     </tbody>
   </table>
+
+  <hr>
+  <a th:href="@{/user/order-list}"> Retourner à la liste des commandes</a>
 </div>
 </body>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 </html>

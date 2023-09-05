@@ -24,7 +24,7 @@
     <form th:action="@{/user/notification-search}" method="get">
       <div style="display: flex;">
         <input type="search" id="keyword" name="keyword" th:value="${keyword}"
-               placeholder="Nom ou prénom de l'utilisateur" aria-describedby="button-addon5"
+               placeholder="Message ou nom de l'utilisateur" aria-describedby="button-addon5"
                class="form-control col-4">
         <button id="button-addon5" type="submit" class="btn btn-primary">
           <i class="fa fa-search"> </i>
@@ -92,5 +92,7 @@
 </div>
 
 </body>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 </html>

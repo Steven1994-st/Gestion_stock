@@ -143,24 +143,18 @@ public class UserController {
     }
 
     @RequestMapping("/product-search")
-    public String searchProduct(Model model, String keyword,
-                                @RequestParam (name="page",defaultValue = "1") int page,
-                                @RequestParam (name="size", defaultValue = "3") int size) {
+    public String searchProduct(Model model, String keyword) {
 
 
-        if(keyword!=null) {
-
+        if(keyword!=null && !keyword.isEmpty()) {
             List<Product> productList = productService.search(keyword);
-            model.addAttribute("listproduct", productList);
-            model.addAttribute("currentPage", page);
-
-
+            model.addAttribute("listProduct", productList);
+            return "productList";
         }else {
-            model.addAttribute("listProduct", productService.getRepository().findAll());
+            return "redirect:/user/product-list";
         }
-        return "productList";
-    }
 
+    }
 
 
     // RESOURCES FOR CUSTOMER
@@ -239,13 +233,14 @@ public class UserController {
 
     @RequestMapping("/customer-search")
     public String searchCustomer(Model model, String keyword) {
-        if(keyword!=null) {
+        if(keyword!=null && !keyword.isEmpty()) {
             List<Customer> customerList = customerService.search(keyword);
             model.addAttribute("listCustomer", customerList);
+            return "customerList";
         }else {
-            model.addAttribute("listCustomer", productService.getRepository().findAll());
+            return "redirect:/user/customer-list";
         }
-        return "customerList";
+
     }
 
 
@@ -254,7 +249,7 @@ public class UserController {
     @RequestMapping("/order-list")
     public String viewOrderListPage(Model model,
                                     @RequestParam (name="page",defaultValue = "0") int page,
-                                    @RequestParam (name="size", defaultValue = "4") int size) {
+                                    @RequestParam (name="size", defaultValue = "3") int size) {
 
         Page<Order> orderPage = orderService.getRepository().findAll(PageRequest.of(page, size));
         model.addAttribute("listOrder",orderPage);
@@ -324,13 +319,13 @@ public class UserController {
 
     @RequestMapping("/order-search")
     public String searchOrder(Model model, String keyword) {
-        if(keyword!=null) {
+        if(keyword!=null && !keyword.isEmpty()) {
             List<Order> orderList = orderService.search(keyword);
             model.addAttribute("listOrder", orderList);
+            return "orderList";
         }else {
-            model.addAttribute("listOrder", orderService.getRepository().findAll());
+            return "redirect:/user/order-list";
         }
-        return "orderList";
     }
 
     @RequestMapping("/view-product-order/{orderId}")
@@ -354,13 +349,22 @@ public class UserController {
         OrderProduct orderProductFound = orderProductService.getRepository()
                 .findOrderProductByOrderAndProduct(orderProduct.getOrder().getId(), orderProduct.getProduct().getId());
 
-        if (orderProductFound != null)
+        if (orderProductFound != null )
+            result.rejectValue("product", null,
+                    "Ce produit existe déjà dans cette commande !!!");
+
+        if (orderProduct.getQuantity() == 0 )
             result.rejectValue("quantity", null,
                     "La quantité est requise !!!");
 
-        if (orderProduct.getQuantity() == 0)
-            result.rejectValue("product", null,
-                    "Ce produit existe déjà dans cette commande !!!");
+        Product product =productService.getRepository()
+                .findProductByName(orderProduct.getProduct().getName());
+
+        int stockQuantity = product.getQuantity();
+
+        if (stockQuantity < orderProduct.getQuantity())
+            result.rejectValue("quantity", null,
+                    "La quantité en stock est insuffisante !!!");
 
         if (result.hasErrors()) {
             model.addAttribute("orderProduct", orderProduct);
@@ -369,8 +373,15 @@ public class UserController {
             model.addAttribute("productList", productService.getRepository().findAll());
             return "viewProductsOrder";
         }
-        orderService.orderAmountUpdate(orderProduct.getOrder());
+
         orderProductService.getRepository().save(orderProduct);
+
+        // Mise à jour de la quantité du produit en stock
+        product.setQuantity(product.getQuantity() - orderProduct.getQuantity());
+        productService.updateProduct(product);
+
+        // Mise à jour du montant total de la commande
+        orderService.orderAmountUpdate(orderProduct.getOrder());
 
         return "redirect:/user/view-product-order/"+orderProduct.getOrder().getId();
     }
@@ -381,7 +392,19 @@ public class UserController {
         OrderProduct orderProduct = orderProductService.getRepository()
                 .findOrderProductByOrderAndProduct(orderId, productId);
 
+
         orderProductService.getRepository().deleteById(orderProduct.getOrderProductKey());
+
+        Product product = productService.getRepository()
+                .findProductByName(orderProduct.getProduct().getName());
+
+        // Mise à jour de la quantité du produit en stock
+        product.setQuantity(product.getQuantity() + orderProduct.getQuantity());
+        productService.updateProduct(product);
+
+        // Mise à jour du montant total de la commande
+        orderService.orderAmountUpdate(orderProduct.getOrder());
+
 
         return "redirect:/user/view-product-order/"+orderProduct.getOrder().getId();
     }
@@ -471,13 +494,14 @@ public class UserController {
 
     @RequestMapping("/holiday-search")
     public String searchHoliday(Model model, String keyword) {
-        if(keyword!=null) {
+        if(keyword!=null && !keyword.isEmpty()) {
             List<Holiday> holidayList = holidayService.search(keyword);
             model.addAttribute("listHoliday", holidayList);
+            return "userHolidayList";
         }else {
-            model.addAttribute("listHoliday", holidayService.getRepository().findAll());
+            return "redirect:/user/holiday-list";
         }
-        return "userHolidayList";
+
     }
 
 
@@ -572,7 +596,7 @@ public class UserController {
     @RequestMapping("/notification-list")
     public String viewNotificationPage(Model model,
                                        @RequestParam (name="page",defaultValue = "0") int page,
-                                       @RequestParam (name="size", defaultValue = "4") int size) {
+                                       @RequestParam (name="size", defaultValue = "5") int size) {
 
         //Récupérer l'utilisateur connecté
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -600,10 +624,10 @@ public class UserController {
 
     @RequestMapping("/notification-search")
     public String searchNotification(Model model, String keyword) {
-        if(keyword!=null) {
+        if(keyword!=null && !keyword.isEmpty()) {
             List<Notification> notificationList = notificationService.search(keyword);
             model.addAttribute("notificationList", notificationList);
-            return "userHolidayList";
+            return "notificationList";
         }else {
             model.addAttribute("notificationList", notificationService.getRepository().findAll());
             return "redirect:/user/notification-list";
