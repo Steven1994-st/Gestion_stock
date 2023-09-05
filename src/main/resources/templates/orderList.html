@@ -21,7 +21,7 @@
   <hr>
 
   <a th:href="@{/user/show-add-order-form}" class="btn btn-primary mb-3"> Ajout commande </a>
-  <a th:href="@{/user/excel_order}" class="btn btn-primary mb-3">  Exporter la liste des commandes</a>
+  <a th:href="@{/user/excel_order}" class="btn btn-warning mb-3">  Exporter la liste des commandes</a>
 
   <div class="mb-3">
     <form th:action="@{/user/order-search}" method="get">
@@ -55,9 +55,10 @@
       <td th:text="${order.amount}"></td>
       <td th:text="${order.status}"></td>
       <td th:text="${order.reservation}"></td>
-      <td> <a th:href="@{/user/show-update-order-form/{id}(id=${order.id})}" class="btn btn-primary">Modifier</a>
+      <td>
+        <a th:if="${order.status == processing}" th:href="@{/user/show-update-order-form/{id}(id=${order.id})}" class="btn btn-primary">Modifier</a>
         <a th:href="@{/user/delete-order-by-id/{id}(id=${order.id})}" class="btn btn-danger" onclick="return confirm('Etes-vous sûr de vouloir supprimer la commande séléctionné ?')">Supprimer</a>
-        <a th:href="@{/user/view-product-order/{id}(id=${order.id})}" class="btn btn-success">Produits</a>
+        <a th:if="${order.status == processing}" th:href="@{/user/view-product-order/{id}(id=${order.id})}" class="btn btn-success">Produits</a>
         <a th:href="@{/user/show-order-payment-form/{id}(id=${order.id})}" class="btn btn-warning">Facture</a>
       </td>
     </tr>

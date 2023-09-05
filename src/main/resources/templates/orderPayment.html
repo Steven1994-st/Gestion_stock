@@ -81,13 +81,11 @@
 
             <input type="hidden" th:field="*{order}" class="form-control mb-4 col-8">
 
-            <div th:if="${order.status == 'PROCESSING'}" class="mb-3">
-                <button class="btn btn-primary mb-3" type="submit">Payer</button>
-            </div>
+            <button th:if="${order.status == processing}" class="btn btn-primary mb-3" type="submit" onclick="return confirm('Confirmer le payement de la commande ?')">Payer</button>
+            <button th:if="${order.status == ended}" disabled class="btn btn-warning mb-3">Déjà payer</button>
         </form>
-        <div th:if="${order.status == 'ENDED'}" class="mb-3">
-            <button class="btn btn-warning mb-3">Déjà payer</button>
-        </div>
+
+
     </div>
 
     <hr>

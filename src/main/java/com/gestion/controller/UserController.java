@@ -256,6 +256,8 @@ public class UserController {
         model.addAttribute("totalPages", orderPage.getTotalPages());
         model.addAttribute("totalItems", orderPage.getTotalElements());
         model.addAttribute("currentPage", page);
+        model.addAttribute("processing", Order.ORDER_STATUS.PROCESSING);
+        model.addAttribute("ended", Order.ORDER_STATUS.ENDED);
 
         return "orderList";
     }
@@ -565,6 +567,8 @@ public class UserController {
         OrderProduct orderProduct = new OrderProduct();
         orderProduct.setOrder(order);
         model.addAttribute("orderProduct", orderProduct);
+        model.addAttribute("processing", Order.ORDER_STATUS.PROCESSING);
+        model.addAttribute("ended", Order.ORDER_STATUS.ENDED);
 
         return "orderPayment";
     }
