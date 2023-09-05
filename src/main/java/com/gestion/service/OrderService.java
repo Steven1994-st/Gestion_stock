@@ -2,6 +2,7 @@ package com.gestion.service;
 
 import com.gestion.model.Order;
 import com.gestion.model.OrderProduct;
+import com.gestion.model.Product;
 import com.gestion.repository.OrderRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -10,7 +11,13 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -88,5 +95,39 @@ public class OrderService {
 
         TypedQuery<Order> query = entityManager.createQuery(criteriaQuery);
         return query.getResultList();
+    }
+
+    /// EXPORT ORDER////////
+
+    public void generateExcel_order(HttpServletResponse response) throws Exception{{
+    }
+        List<Order> orderList =orderRepository.findAll();
+
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Product Info");
+        HSSFRow row = sheet.createRow(0);
+
+        row.createCell(0).setCellValue("ID Commande");
+        row.createCell(1).setCellValue("Description");
+        row.createCell(2).setCellValue("Montant");
+
+
+
+        int dataRowIndex = 1;
+
+        for (Order order : orderList)
+        {
+            HSSFRow dataRow = sheet.createRow(dataRowIndex);
+            dataRow.createCell(0).setCellValue(order.getId());
+            dataRow.createCell(1).setCellValue(order.getDescription());
+            dataRow.createCell(2).setCellValue(order.getAmount());
+            dataRowIndex++;
+        }
+
+        ServletOutputStream ops = response.getOutputStream();
+        workbook.write(ops);
+        workbook.close();
+        ops.close();
+
     }
 }

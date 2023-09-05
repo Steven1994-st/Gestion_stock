@@ -609,6 +609,9 @@ public class UserController {
             return "redirect:/user/notification-list";
         }
     }
+
+    /////EXPORT FILES///
+
     @GetMapping("/excel")
     public void generateExcelReport(HttpServletResponse response) throws Exception{
 
@@ -620,6 +623,34 @@ public class UserController {
         response.setHeader(headerKey, headerValue);
 
         productService.generateExcel(response);
+        response.flushBuffer();
+    }
+
+    @GetMapping("/excel_order")
+    public void generateExcelReport_order(HttpServletResponse response) throws Exception{
+
+        response.setContentType("application/octet-stream");
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment;filename=Listes des commandes.xls";
+
+        response.setHeader(headerKey, headerValue);
+
+        orderService.generateExcel_order(response);
+        response.flushBuffer();
+    }
+
+    @GetMapping("/excel_customer")
+    public void generateExcelReport_customer(HttpServletResponse response) throws Exception{
+
+        response.setContentType("application/octet-stream");
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment;filename=Listes des clients.xls";
+
+        response.setHeader(headerKey, headerValue);
+
+        customerService.generateExcel_customer(response);
         response.flushBuffer();
     }
 

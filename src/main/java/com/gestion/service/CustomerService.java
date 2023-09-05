@@ -10,7 +10,12 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -77,5 +82,44 @@ public class CustomerService {
 
         TypedQuery<Customer> query = entityManager.createQuery(criteriaQuery);
         return query.getResultList();
+    }
+
+    ///// EXPORT COSTUMER ////////
+
+
+    public void generateExcel_customer(HttpServletResponse response) throws Exception{{
+    }
+        List<Customer> customerList=customerRepository.findAll();
+
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Custumer info");
+        HSSFRow row = sheet.createRow(0);
+
+        row.createCell(0).setCellValue("ID client");
+        row.createCell(1).setCellValue("Name");
+        row.createCell(2).setCellValue("Firstname");
+        row.createCell(3).setCellValue("Phone");
+        row.createCell(4).setCellValue("Email");
+        row.createCell(5).setCellValue("Address");
+
+        int dataRowIndex = 1;
+
+        for (Customer customer :customerList )
+        {
+            HSSFRow dataRow = sheet.createRow(dataRowIndex);
+            dataRow.createCell(0).setCellValue(customer.getId());
+            dataRow.createCell(1).setCellValue(customer.getName());
+            dataRow.createCell(2).setCellValue(customer.getFirstname());
+            dataRow.createCell(3).setCellValue(customer.getPhone());
+            dataRow.createCell(4).setCellValue(customer.getEmail());
+            dataRow.createCell(5).setCellValue(customer.getAddress());
+            dataRowIndex++;
+        }
+
+        ServletOutputStream ops = response.getOutputStream();
+        workbook.write(ops);
+        workbook.close();
+        ops.close();
+
     }
 }

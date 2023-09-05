@@ -20,6 +20,7 @@
   <h1 style="margin-bottom: 10px">Liste des clients</h1>
   <hr>
   <a th:href="@{/user/show-add-customer-form}" class="btn btn-primary mb-3"> Ajout client </a>
+  <a th:href="@{/user/excel_customer}" class="btn btn-primary mb-3">  Exporter la liste des clients</a>
 
   <div class="mb-3">
     <form th:action="@{/user/customer-search}" method="get">
